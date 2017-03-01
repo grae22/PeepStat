@@ -2,10 +2,36 @@
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 public partial class _Default : System.Web.UI.Page
 {
+  //---------------------------------------------------------------------------
+
+  const string DB_SERVER_NAME = @"GRAEMEB-PC\SQLEXPRESS";
+  const string DB_NAME = "PeepStat";
+  const string DB_USERNAME = "PeepStatUser";
+  const string DB_PASSWORD = "PeepStatUser";
+
+  string DB_CONNECTION_STRING =
+    "Server=" + DB_SERVER_NAME + ';' +
+    "Database=" + DB_NAME + ';' +
+    "User Id=" + DB_USERNAME + ';' +
+    "Password=" + DB_PASSWORD + ';';
+
+  //---------------------------------------------------------------------------
+
+  class Person
+  {
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public List<string> Status { get; set; }
+
+    public Person()
+    {
+      Status = new List<string>();
+    }
+  }
+
   //---------------------------------------------------------------------------
 
   protected void Page_Load( object sender, EventArgs e )
@@ -13,68 +39,50 @@ public partial class _Default : System.Web.UI.Page
     Dictionary<string, Person> people = new Dictionary<string, Person>();
     SortedDictionary<string, int> statusTypes = new SortedDictionary<string, int>();
 
-    SqlConnection connection =
-      new SqlConnection(
-        @"Server=GRAEMEPC\SQLEXPRESS;Database=PeepStat;Trusted_Connection=True;" );
-
-    SqlCommand command =
-      new SqlCommand(
-        "SELECT * FROM PeopleStatusView ORDER BY PersonName",
-        connection );
-
+    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
     connection.Open();
 
-    SqlDataReader reader = command.ExecuteReader();
+    SqlDataReader reader =
+      new SqlCommand(
+        "SELECT * FROM PeopleStatusView ORDER BY PersonName",
+        connection ).ExecuteReader();
 
     while( reader.Read() )
     {
+      // Read the values from the view.
       string name = null;
       string statusType = null;
       int personId = -1;
       int statusTypeId = -1;
 
-      try
+      if( reader.IsDBNull( 0 ) == false )
       {
         name = reader.GetString( 0 );
       }
-      catch( Exception )
-      {
-        // Ignore.
-      }
 
-      try
+      if( reader.IsDBNull( 1 ) == false )
       {
         statusType = reader.GetString( 1 );
       }
-      catch( Exception )
-      {
-        // Ignore.
-      }      
 
-      try
+      if( reader.IsDBNull( 2 ) == false )
       {
         personId = reader.GetInt32( 2 );
       }
-      catch( Exception )
-      {
-        // Ignore.
-      }      
 
-      try
+      if( reader.IsDBNull( 3 ) == false )
       {
         statusTypeId = reader.GetInt32( 3 );
       }
-      catch( Exception )
-      {
-        // Ignore.
-      }      
 
+      // Add the person to our collection.
       if( name != null &&
           people.ContainsKey( name ) == false )
       {
         people.Add( name, new Person() );
       }
 
+      // Retrieve the person from our collection.
       Person person = null;
 
       if( name != null )
@@ -85,6 +93,8 @@ public partial class _Default : System.Web.UI.Page
         person.Name = name;
       }
 
+      // Add the status to both the current person (if one) and our collection
+      // of statue types.
       if( statusType != null )
       {
         if( person != null )
@@ -99,31 +109,13 @@ public partial class _Default : System.Web.UI.Page
       }
     }
 
+    // Clean up.
     reader.Close();
     connection.Close();
 
-    Body.Controls.Add( BuildTable( people, statusTypes ) );
-  }
-
-  //---------------------------------------------------------------------------
-
-  class Person
-  {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public List<string> Status { get; set; }
-
-    public Person()
-    {
-      Status = new List<string>();
-    }
-
-    public override string ToString()
-    {
-      var s = "";
-      Status.ForEach( ( statusType ) => s += statusType + ' ' );
-      return s;
-    }
+    // Build the page. 
+    Body.Controls.Add(
+      BuildTable( people, statusTypes ) );
   }
 
   //---------------------------------------------------------------------------
@@ -238,7 +230,6 @@ public partial class _Default : System.Web.UI.Page
 
       var button = new ImageButton();
       button.ID = peopleId.ToString() + '~' + statusId.ToString();
-      //button.Text = text;
       button.ImageUrl =
         statusActive ?
         "https://cdn2.iconfinder.com/data/icons/basicset/tick_32.png" :
@@ -248,8 +239,6 @@ public partial class _Default : System.Web.UI.Page
 
       cell.Controls.Add( button );
     }
-
-    //row.Cells[ column ].Text = text;
   }
 
   //---------------------------------------------------------------------------
@@ -263,15 +252,15 @@ public partial class _Default : System.Web.UI.Page
 
     ImageButton button = (ImageButton)sender;
 
+    // Extract the person id & status-type id.
     string[] buttonId = button.ID.Split( '~' );
 
     int personId = int.Parse( buttonId[ 0 ] );
     int statusTypeId = int.Parse( buttonId[ 1 ] );
 
-    SqlConnection connection =
-      new SqlConnection(
-        @"Server=GRAEMEPC\SQLEXPRESS;Database=PeepStat;Trusted_Connection=True;" );
-
+    // If the status was active then remove it from the PeopleStatus table,
+    // otherwise add it (to make the status active).
+    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
     connection.Open();
 
     SqlCommand command = null;
@@ -300,6 +289,7 @@ public partial class _Default : System.Web.UI.Page
     command.ExecuteNonQuery();
     connection.Close();
 
+    // Refresh the page.
     Response.Redirect( Request.RawUrl );
   }
 
