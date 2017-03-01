@@ -7,16 +7,8 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
-  const string DB_SERVER_NAME = @"GRAEMEB-PC\SQLEXPRESS";
-  const string DB_NAME = "PeepStat";
-  const string DB_USERNAME = "PeepStatUser";
-  const string DB_PASSWORD = "PeepStatUser";
-
   string DB_CONNECTION_STRING =
-    "Server=" + DB_SERVER_NAME + ';' +
-    "Database=" + DB_NAME + ';' +
-    "User Id=" + DB_USERNAME + ';' +
-    "Password=" + DB_PASSWORD + ';';
+    "Server=tcp:peepstat.database.windows.net,1433;Initial Catalog=PeepStat;Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
   //---------------------------------------------------------------------------
 
