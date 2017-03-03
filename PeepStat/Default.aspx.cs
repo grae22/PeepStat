@@ -18,6 +18,8 @@ public partial class _Default : System.Web.UI.Page
     "User Id=" + DB_USERNAME + ';' +
     "Password=" + DB_PASSWORD + ';';
 
+  SortedDictionary<string, int> StatusTypes = new SortedDictionary<string, int>();
+
   //---------------------------------------------------------------------------
 
   class Person
@@ -37,7 +39,6 @@ public partial class _Default : System.Web.UI.Page
   protected void Page_Load( object sender, EventArgs e )
   {
     Dictionary<string, Person> people = new Dictionary<string, Person>();
-    SortedDictionary<string, int> statusTypes = new SortedDictionary<string, int>();
 
     SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
     connection.Open();
@@ -102,9 +103,9 @@ public partial class _Default : System.Web.UI.Page
           person.Status.Add( statusType );
         }
 
-        if( statusTypes.ContainsKey( statusType ) == false )
+        if( StatusTypes.ContainsKey( statusType ) == false )
         {
-          statusTypes.Add( statusType, statusTypeId );
+          StatusTypes.Add( statusType, statusTypeId );
         }
       }
     }
@@ -113,17 +114,18 @@ public partial class _Default : System.Web.UI.Page
     reader.Close();
     connection.Close();
 
-    // Build the page. 
-    Body.Controls.Add(
-      BuildTable( people, statusTypes ) );
+    // Build the page.
+    BuildTable( StatusTable,
+                people,
+                StatusTypes );
   }
 
   //---------------------------------------------------------------------------
 
-  Table BuildTable( Dictionary<string, Person> people,
+  Table BuildTable( Table table,
+                    Dictionary<string, Person> people,
                     SortedDictionary<string, int> statusTypes )
   {
-    var table = new Table();
     table.BorderWidth = 1;
 
     var header = new TableRow();
@@ -166,6 +168,9 @@ public partial class _Default : System.Web.UI.Page
           row,
           columnIndex );
       }
+
+      AddSelectAllToRow( person.Id, row, row.Cells.Count );
+      AddSelectNoneToRow( person.Id, row, row.Cells.Count );
 
       table.Rows.Add( row );
     }
@@ -242,6 +247,46 @@ public partial class _Default : System.Web.UI.Page
   }
 
   //---------------------------------------------------------------------------
+  
+  void AddSelectAllToRow( int peopleId,
+                          TableRow row,
+                          int column )
+  {
+    while( column > row.Cells.Count - 1 )
+    {
+      var cell = new TableCell();
+      row.Cells.Add( cell );
+
+      var button = new Button();
+      button.ID = "all_" + peopleId.ToString();
+      button.Text = "All";
+      button.Click += OnSelectAllClick;
+
+      cell.Controls.Add( button );
+    }
+  }
+
+  //---------------------------------------------------------------------------
+  
+  void AddSelectNoneToRow( int peopleId,
+                           TableRow row,
+                           int column )
+  {
+    while( column > row.Cells.Count - 1 )
+    {
+      var cell = new TableCell();
+      row.Cells.Add( cell );
+
+      var button = new Button();
+      button.ID = "none_" + peopleId.ToString();
+      button.Text = "None";
+      button.Click += OnSelectNoneClick;
+
+      cell.Controls.Add( button );
+    }
+  }
+
+  //---------------------------------------------------------------------------
 
   void HandleStatusClick( object sender, EventArgs args )
   {
@@ -287,6 +332,96 @@ public partial class _Default : System.Web.UI.Page
     }
 
     command.ExecuteNonQuery();
+    connection.Close();
+
+    // Refresh the page.
+    Response.Redirect( Request.RawUrl );
+  }
+
+  //---------------------------------------------------------------------------
+
+  void OnSelectAllClick( object sender, EventArgs args )
+  {
+    if( sender is Button == false )
+    {
+      return;
+    }
+
+    Button button = (Button)sender;
+
+    // Extract the person id & status-type id.
+    int personId = int.Parse( button.ID.Replace( "all_", "" ) );
+
+    // If the status was active then remove it from the PeopleStatus table,
+    // otherwise add it (to make the status active).
+    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
+    connection.Open();
+
+    SqlCommand command = null;
+
+    foreach( int statusTypeId in StatusTypes.Values )
+    {
+      command =
+        new SqlCommand(
+          string.Format(
+            "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
+            personId,
+            statusTypeId ),
+          connection );
+
+      command.ExecuteNonQuery();
+
+      command =
+        new SqlCommand(
+          string.Format(
+            "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
+            personId,
+            statusTypeId ),
+          connection );
+
+      command.ExecuteNonQuery();
+    }
+
+    connection.Close();
+
+    // Refresh the page.
+    Response.Redirect( Request.RawUrl );
+  }
+
+  //---------------------------------------------------------------------------
+
+  void OnSelectNoneClick( object sender, EventArgs args )
+  {
+    if( sender is Button == false )
+    {
+      return;
+    }
+
+    Button button = (Button)sender;
+
+    // Extract the person id & status-type id.
+    int personId = int.Parse( button.ID.Replace( "none_", "" ) );
+
+    // If the status was active then remove it from the PeopleStatus table,
+    // otherwise add it (to make the status active).
+    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
+    connection.Open();
+
+    SqlCommand command = null;
+
+    foreach( int statusTypeId in StatusTypes.Values )
+    {
+      command =
+        new SqlCommand(
+          string.Format(
+            "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
+            personId,
+            statusTypeId ),
+          connection );
+
+      command.ExecuteNonQuery();
+    }
+
     connection.Close();
 
     // Refresh the page.
