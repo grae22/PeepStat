@@ -7,6 +7,8 @@
     <title></title>
   </head>
   <body>
-    <form id="Body" runat="server" />
+    <form id="Body" runat="server">
+      <asp:table id="StatusTable" runat="server" CellPadding="5" />
+    </form>
   </body>
 </html>
