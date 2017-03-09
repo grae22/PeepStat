@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using System.IO;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -259,8 +260,18 @@ public partial class _Default : System.Web.UI.Page
     }
 
     var newCell = new TableCell();
-    newCell.Text = text;
-    newCell.Font.Bold = true;
+
+    if( File.Exists( Server.MapPath( text + ".png" ) ) )
+    {
+      var image = new Image();
+      image.ImageUrl = text + ".png";
+      newCell.Controls.Add( image );
+    }
+    else
+    {
+      newCell.Text = text;
+      newCell.Font.Bold = true;
+    }
 
     row.Cells.Add( newCell );
 
