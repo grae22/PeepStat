@@ -5,9 +5,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
     <meta http-equiv="Refresh" content="60" />
-    <title></title>
+    <title>TeamTracker</title>
+	<link rel="icon" href="team.png">
   </head>
   <body>
+  <b>Team Availability Matrix</b>
     <form id="Body" runat="server">
       <asp:table id="StatusTable" runat="server" CellPadding="5" />
     </form>
