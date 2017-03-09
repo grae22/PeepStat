@@ -316,8 +316,8 @@ public partial class _Default : System.Web.UI.Page
     button.ID = string.Format( "{0}~{1}", peopleId, statusId );
     button.ImageUrl =
       statusActive ?
-      "in_office.png" :
-      "away.png";
+      "yes.png" :
+      "no.png";
     button.ToolTip = statusActive ? "active" : "";
     button.Click += HandleStatusClick;
 
