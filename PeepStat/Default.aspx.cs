@@ -7,7 +7,7 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
-  const string DB_SERVER_NAME = @"localhost";
+  const string DB_SERVER_NAME = "localhost";
   const string DB_NAME = "PeepStat";
   const string DB_USERNAME = "PeepStatUser";
   const string DB_PASSWORD = "PeepStatUser";
@@ -183,12 +183,14 @@ public partial class _Default : System.Web.UI.Page
                     Dictionary<string, Status> statusTypes )
   {
     // Build a dictonary of status-types sorted by sort-order.
-    SortedDictionary<int, Status> sortedStatusTypes = new SortedDictionary<int, Status>();
+    List<Status> sortedStatusTypes = new List<Status>();
 
     foreach( Status status in statusTypes.Values )
     {
-      sortedStatusTypes.Add( status.SortOrder, status );
+      sortedStatusTypes.Add( status );
     }
+
+    sortedStatusTypes.Sort();
 
     // Table general.
     table.BorderWidth = 1;
@@ -203,9 +205,13 @@ public partial class _Default : System.Web.UI.Page
     header.Cells[ 0 ].Font.Bold = true;
 
     // Add each status type to the header.
-    foreach( Status status in sortedStatusTypes.Values )
+    Dictionary<Status, int> statusToColumnIndex = new Dictionary<Status, int>();
+
+    foreach( Status status in sortedStatusTypes )
     {
-      AddCellToHeaderRowIfNotFound( header, status.Name );
+      statusToColumnIndex.Add(
+        status,
+        AddCellToHeaderRowIfNotFound( header, status.Name ) );
     }
     
     // Add each person and their statuses as a row.
@@ -226,7 +232,7 @@ public partial class _Default : System.Web.UI.Page
           status.Id,
           person.Status.Contains( status ),
           row,
-          status.SortOrder + 1 );
+          statusToColumnIndex[ status ] );
       }
 
       AddSelectAllToRow( person.Id, row, row.Cells.Count );
