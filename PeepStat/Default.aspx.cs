@@ -7,7 +7,7 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
-  const string DB_SERVER_NAME = @"GRAEMEB-PC\SQLEXPRESS";
+  const string DB_SERVER_NAME = @"localhost";
   const string DB_NAME = "PeepStat";
   const string DB_USERNAME = "PeepStatUser";
   const string DB_PASSWORD = "PeepStatUser";
@@ -299,8 +299,8 @@ public partial class _Default : System.Web.UI.Page
     button.ID = string.Format( "{0}~{1}", peopleId, statusId );
     button.ImageUrl =
       statusActive ?
-      "https://cdn2.iconfinder.com/data/icons/basicset/tick_32.png" :
-      "https://cdn2.iconfinder.com/data/icons/basicset/delete_32.png";
+      "in_office.png" :
+      "away.png";
     button.ToolTip = statusActive ? "active" : "";
     button.Click += HandleStatusClick;
 
