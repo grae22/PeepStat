@@ -20,7 +20,7 @@ public partial class _Default : System.Web.UI.Page
       DB_USERNAME,
       DB_PASSWORD );
 
-  SortedDictionary<string, int> StatusTypes = new SortedDictionary<string, int>();
+  Dictionary<string, Status> StatusTypes;
 
   //---------------------------------------------------------------------------
 
@@ -28,11 +28,30 @@ public partial class _Default : System.Web.UI.Page
   {
     public int Id { get; set; }
     public string Name { get; set; }
-    public List<string> Status { get; set; }
+    public List<Status> Status { get; set; }
 
     public Person()
     {
-      Status = new List<string>();
+      Status = new List<Status>();
+    }
+  }
+
+  //---------------------------------------------------------------------------
+
+  class Status : IComparable
+  {
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int SortOrder { get; set; }
+
+    public int CompareTo( object ob )
+    {
+      if( ob is Status )
+      {
+        return SortOrder.CompareTo( ((Status)ob).SortOrder );
+      }
+
+      return 0;
     }
   }
 
@@ -40,11 +59,52 @@ public partial class _Default : System.Web.UI.Page
 
   protected void Page_Load( object sender, EventArgs e )
   {
-    // Clear out existing status types (in case we're reloading).
-    StatusTypes.Clear();
-
-    // Load people & status types from the db.
     Dictionary<string, Person> people = new Dictionary<string, Person>();
+
+    PopulateStatusTypes();
+    PopulatePeople( out people );
+
+    BuildTable( StatusTable,
+                people,
+                StatusTypes );
+  }
+
+  //---------------------------------------------------------------------------
+
+  void PopulateStatusTypes()
+  {
+    StatusTypes = new Dictionary<string, Status>();
+
+    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
+    connection.Open();
+
+    SqlDataReader reader =
+      new SqlCommand(
+        "SELECT * FROM StatusTypes",
+        connection ).ExecuteReader();
+
+    while( reader.Read() )
+    {
+      Status status = new Status
+      {
+        Id = reader.GetInt32( 0 ),
+        Name = reader.GetString( 1 ),
+        SortOrder = reader.GetInt32( 2 )
+      };
+
+      StatusTypes.Add( status.Name, status );
+    }
+
+    reader.Close();
+    connection.Close();
+  }
+
+  //---------------------------------------------------------------------------
+
+  void PopulatePeople( out Dictionary<string, Person> people )
+  {
+    // Load people & status types from the db.
+    people = new Dictionary<string, Person>();
 
     SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
     connection.Open();
@@ -106,12 +166,7 @@ public partial class _Default : System.Web.UI.Page
       {
         if( person != null )
         {
-          person.Status.Add( statusType );
-        }
-
-        if( StatusTypes.ContainsKey( statusType ) == false )
-        {
-          StatusTypes.Add( statusType, statusTypeId );
+          person.Status.Add( StatusTypes[ statusType ] );
         }
       }
     }
@@ -119,21 +174,26 @@ public partial class _Default : System.Web.UI.Page
     // Clean up.
     reader.Close();
     connection.Close();
-
-    // Build the page.
-    BuildTable( StatusTable,
-                people,
-                StatusTypes );
   }
 
   //---------------------------------------------------------------------------
   
   Table BuildTable( Table table,
                     Dictionary<string, Person> people,
-                    SortedDictionary<string, int> statusTypes )
+                    Dictionary<string, Status> statusTypes )
   {
+    // Build a dictonary of status-types sorted by sort-order.
+    SortedDictionary<int, Status> sortedStatusTypes = new SortedDictionary<int, Status>();
+
+    foreach( Status status in statusTypes.Values )
+    {
+      sortedStatusTypes.Add( status.SortOrder, status );
+    }
+
+    // Table general.
     table.BorderWidth = 1;
 
+    // Table header.
     var header = new TableRow();
     table.Rows.Add( header );
 
@@ -143,13 +203,9 @@ public partial class _Default : System.Web.UI.Page
     header.Cells[ 0 ].Font.Bold = true;
 
     // Add each status type to the header.
-    Dictionary<string, int> statusToColumnIndex = new Dictionary<string, int>();
-
-    foreach( string status in statusTypes.Keys )
+    foreach( Status status in sortedStatusTypes.Values )
     {
-      statusToColumnIndex.Add(
-        status,
-        AddCellToHeaderRowIfNotFound( header, status ) );
+      AddCellToHeaderRowIfNotFound( header, status.Name );
     }
     
     // Add each person and their statuses as a row.
@@ -163,16 +219,14 @@ public partial class _Default : System.Web.UI.Page
         0,
         HorizontalAlign.Left );
 
-      foreach( string status in statusTypes.Keys )
+      foreach( Status status in statusTypes.Values )
       {
-        int columnIndex = statusToColumnIndex[ status ];
-
         AddStatusToRow(
           person.Id,
-          statusTypes[ status ],
+          status.Id,
           person.Status.Contains( status ),
           row,
-          columnIndex );
+          status.SortOrder + 1 );
       }
 
       AddSelectAllToRow( person.Id, row, row.Cells.Count );
@@ -235,21 +289,22 @@ public partial class _Default : System.Web.UI.Page
   {
     while( column > row.Cells.Count - 1 )
     {
-      var cell = new TableCell();
-      cell.HorizontalAlign = align;
-      row.Cells.Add( cell );
-
-      var button = new ImageButton();
-      button.ID = peopleId.ToString() + '~' + statusId.ToString();
-      button.ImageUrl =
-        statusActive ?
-        "https://cdn2.iconfinder.com/data/icons/basicset/tick_32.png" :
-        "https://cdn2.iconfinder.com/data/icons/basicset/delete_32.png";
-      button.ToolTip = statusActive ? "active" : "";
-      button.Click += HandleStatusClick;
-
-      cell.Controls.Add( button );
+      row.Cells.Add( new TableCell() );
     }
+
+    TableCell cell = row.Cells[ column ];
+    cell.HorizontalAlign = align;
+
+    var button = new ImageButton();
+    button.ID = string.Format( "{0}~{1}", peopleId, statusId );
+    button.ImageUrl =
+      statusActive ?
+      "https://cdn2.iconfinder.com/data/icons/basicset/tick_32.png" :
+      "https://cdn2.iconfinder.com/data/icons/basicset/delete_32.png";
+    button.ToolTip = statusActive ? "active" : "";
+    button.Click += HandleStatusClick;
+
+    cell.Controls.Add( button );
   }
 
   //---------------------------------------------------------------------------
@@ -365,14 +420,14 @@ public partial class _Default : System.Web.UI.Page
 
     SqlCommand command = null;
 
-    foreach( int statusTypeId in StatusTypes.Values )
+    foreach( Status status in StatusTypes.Values )
     {
       command =
         new SqlCommand(
           string.Format(
             "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
             personId,
-            statusTypeId ),
+            status.Id ),
           connection );
 
       command.ExecuteNonQuery();
@@ -382,7 +437,7 @@ public partial class _Default : System.Web.UI.Page
           string.Format(
             "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
             personId,
-            statusTypeId ),
+            status.Id ),
           connection );
 
       command.ExecuteNonQuery();
@@ -415,14 +470,14 @@ public partial class _Default : System.Web.UI.Page
 
     SqlCommand command = null;
 
-    foreach( int statusTypeId in StatusTypes.Values )
+    foreach( Status status in StatusTypes.Values )
     {
       command =
         new SqlCommand(
           string.Format(
             "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
             personId,
-            statusTypeId ),
+            status.Id ),
           connection );
 
       command.ExecuteNonQuery();
