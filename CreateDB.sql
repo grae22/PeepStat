@@ -187,27 +187,27 @@ USE [PeepStat]
 GO
 
 INSERT INTO [dbo].[StatusTypes]
-           ([name])
+           ([name],[SortOrder])
      VALUES
-           ('Presence')
+           ('Presence',0)
 GO
 
 INSERT INTO [dbo].[StatusTypes]
-           ([name])
+           ([name],[SortOrder])
      VALUES
-           ('Phone')
+           ('Phone',1)
 GO
 
 INSERT INTO [dbo].[StatusTypes]
-           ([name])
+           ([name],[SortOrder])
      VALUES
-           ('Email')
+           ('Email',2)
 GO
 
 INSERT INTO [dbo].[StatusTypes]
-           ([name])
+           ([name],[SortOrder])
      VALUES
-           ('Skype')
+           ('Skype',3)
 GO
 
 -- Create people status view
