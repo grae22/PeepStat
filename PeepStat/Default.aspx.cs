@@ -13,10 +13,12 @@ public partial class _Default : System.Web.UI.Page
   const string DB_PASSWORD = "PeepStatUser";
 
   string DB_CONNECTION_STRING =
-    "Server=" + DB_SERVER_NAME + ';' +
-    "Database=" + DB_NAME + ';' +
-    "User Id=" + DB_USERNAME + ';' +
-    "Password=" + DB_PASSWORD + ';';
+    string.Format(
+      "Server={0};Database={1};User Id={2};Password={3};",
+      DB_SERVER_NAME,
+      DB_NAME,
+      DB_USERNAME,
+      DB_PASSWORD );
 
   SortedDictionary<string, int> StatusTypes = new SortedDictionary<string, int>();
 
@@ -38,6 +40,10 @@ public partial class _Default : System.Web.UI.Page
 
   protected void Page_Load( object sender, EventArgs e )
   {
+    // Clear out existing status types (in case we're reloading).
+    StatusTypes.Clear();
+
+    // Load people & status types from the db.
     Dictionary<string, Person> people = new Dictionary<string, Person>();
 
     SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
@@ -121,7 +127,7 @@ public partial class _Default : System.Web.UI.Page
   }
 
   //---------------------------------------------------------------------------
-
+  
   Table BuildTable( Table table,
                     Dictionary<string, Person> people,
                     SortedDictionary<string, int> statusTypes )

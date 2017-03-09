@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
+    <meta http-equiv="Refresh" content="60" />
     <title></title>
   </head>
   <body>
