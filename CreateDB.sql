@@ -137,7 +137,7 @@ GO
 CREATE TABLE [dbo].[StatusTypes](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](50) NOT NULL,
-  [sortOrder] [int] NOT NULL,
+  [sortOrder] [int] NOT NULL CONSTRAINT [DF_StatusTypes_sortOrder] DEFAULT ((0)),
  CONSTRAINT [PK_StatusTypes] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
