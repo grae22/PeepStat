@@ -195,7 +195,7 @@ public partial class _Default : System.Web.UI.Page
         0,
         HorizontalAlign.Left );
 
-      AddTextCellToRow(
+      AddSipLinkCellToRow(
         person.Extension,
         row,
         1,
@@ -260,6 +260,28 @@ public partial class _Default : System.Web.UI.Page
     row.Cells[ column ].Text = text;
   }
 
+  //---------------------------------------------------------------------------
+
+  void AddSipLinkCellToRow( string text,
+                            TableRow row,
+                            int column,
+                            HorizontalAlign align = HorizontalAlign.Center )
+  {
+    while( column > row.Cells.Count - 1 )
+    {
+      var cell = new TableCell();
+      cell.HorizontalAlign = align;
+
+      row.Cells.Add( cell );
+    }
+
+    var link = new HyperLink();
+    link.NavigateUrl = string.Format( "<a href='sip:{0}'>{0}</a>", text );
+    link.Text = link.NavigateUrl;
+    
+    row.Cells[ column ].Controls.Add( link );
+  }
+  
   //---------------------------------------------------------------------------
 
   void AddStatusToRow( int peopleId,
