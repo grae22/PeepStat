@@ -9,9 +9,10 @@
 	<link rel="icon" href="team.png">
   </head>
   <body>
-  <b>Team Availability Matrix</b>
+  <b>Support Team Availability Matrix</b>
     <form id="Body" runat="server">
       <asp:table id="StatusTable" runat="server" CellPadding="5" />
     </form>
+	v1.0
   </body>
 </html>
