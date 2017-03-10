@@ -8,19 +8,6 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
-  const string DB_SERVER_NAME = "localhost";
-  const string DB_NAME = "PeepStat";
-  const string DB_USERNAME = "PeepStatUser";
-  const string DB_PASSWORD = "PeepStatUser";
-
-  string DB_CONNECTION_STRING =
-    string.Format(
-      "Server={0};Database={1};User Id={2};Password={3};",
-      DB_SERVER_NAME,
-      DB_NAME,
-      DB_USERNAME,
-      DB_PASSWORD );
-
   Dictionary<string, Status> StatusTypes;
 
   //---------------------------------------------------------------------------
@@ -57,7 +44,7 @@ public partial class _Default : System.Web.UI.Page
   }
 
   //---------------------------------------------------------------------------
-
+  
   protected void Page_Load( object sender, EventArgs e )
   {
     Dictionary<string, Person> people = new Dictionary<string, Person>();
@@ -76,7 +63,7 @@ public partial class _Default : System.Web.UI.Page
   {
     StatusTypes = new Dictionary<string, Status>();
 
-    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
+    SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING );
     connection.Open();
 
     SqlDataReader reader =
@@ -107,7 +94,7 @@ public partial class _Default : System.Web.UI.Page
     // Load people & status types from the db.
     people = new Dictionary<string, Person>();
 
-    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
+    SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING );
     connection.Open();
 
     SqlDataReader reader =
@@ -383,34 +370,26 @@ public partial class _Default : System.Web.UI.Page
 
     // If the status was active then remove it from the PeopleStatus table,
     // otherwise add it (to make the status active).
-    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
-    connection.Open();
-
-    SqlCommand command = null;
+    string command;
 
     if( button.ToolTip == "active" )
     {
       command =
-        new SqlCommand(
-          string.Format(
-            "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
-            personId,
-            statusTypeId ),
-          connection );
+        string.Format(
+          "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
+          personId,
+          statusTypeId );
     }
     else
     {
       command =
-        new SqlCommand(
-          string.Format(
-            "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
-            personId,
-            statusTypeId ),
-          connection );
+        string.Format(
+          "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
+          personId,
+          statusTypeId );
     }
 
-    command.ExecuteNonQuery();
-    connection.Close();
+    Database.ExecSql( command );
 
     // Refresh the page.
     Response.Redirect( Request.RawUrl );
@@ -432,35 +411,26 @@ public partial class _Default : System.Web.UI.Page
 
     // If the status was active then remove it from the PeopleStatus table,
     // otherwise add it (to make the status active).
-    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
-    connection.Open();
-
-    SqlCommand command = null;
+    string command;
 
     foreach( Status status in StatusTypes.Values )
     {
       command =
-        new SqlCommand(
-          string.Format(
-            "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
-            personId,
-            status.Id ),
-          connection );
+        string.Format(
+          "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
+          personId,
+          status.Id );
 
-      command.ExecuteNonQuery();
+      Database.ExecSql( command );
 
       command =
-        new SqlCommand(
-          string.Format(
-            "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
-            personId,
-            status.Id ),
-          connection );
+        string.Format(
+          "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
+          personId,
+          status.Id );
 
-      command.ExecuteNonQuery();
+      Database.ExecSql( command );
     }
-
-    connection.Close();
 
     // Refresh the page.
     Response.Redirect( Request.RawUrl );
@@ -482,25 +452,18 @@ public partial class _Default : System.Web.UI.Page
 
     // If the status was active then remove it from the PeopleStatus table,
     // otherwise add it (to make the status active).
-    SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING );
-    connection.Open();
-
-    SqlCommand command = null;
+    string command;
 
     foreach( Status status in StatusTypes.Values )
     {
       command =
-        new SqlCommand(
-          string.Format(
-            "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
-            personId,
-            status.Id ),
-          connection );
+        string.Format(
+          "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
+          personId,
+          status.Id );
 
-      command.ExecuteNonQuery();
+      Database.ExecSql( command );
     }
-
-    connection.Close();
 
     // Refresh the page.
     Response.Redirect( Request.RawUrl );
