@@ -16,6 +16,8 @@
     <form id="Body" runat="server">
       <asp:table id="StatusTable" runat="server" CellPadding="5" />
     </form>
-	v1.0
+	<font face="Arial" size="1" color="black">
+	TeamTracker v1.0 © GB & JM 2017
+	</font>
   </body>
 </html>
