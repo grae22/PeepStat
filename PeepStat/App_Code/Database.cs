@@ -5,9 +5,9 @@ public class Database
   //---------------------------------------------------------------------------
 
   public const string DB_SERVER_NAME = "localhost";
-  public const string DB_NAME = "PeepStat";
-  public const string DB_USERNAME = "PeepStatUser";
-  public const string DB_PASSWORD = "PeepStatUser";
+  public const string DB_NAME = "TeamTracker";
+  public const string DB_USERNAME = "TeamTrackerUser";
+  public const string DB_PASSWORD = "TeamTrackerUser";
 
   public static readonly string DB_CONNECTION_STRING =
     string.Format(
