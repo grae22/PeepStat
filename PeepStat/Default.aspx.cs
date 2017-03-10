@@ -11,40 +11,7 @@ public partial class _Default : System.Web.UI.Page
   Dictionary<string, Status> StatusTypes;
 
   //---------------------------------------------------------------------------
-
-  class Person
-  {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public List<Status> Status { get; set; }
-
-    public Person()
-    {
-      Status = new List<Status>();
-    }
-  }
-
-  //---------------------------------------------------------------------------
-
-  class Status : IComparable
-  {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public int SortOrder { get; set; }
-
-    public int CompareTo( object ob )
-    {
-      if( ob is Status )
-      {
-        return SortOrder.CompareTo( ((Status)ob).SortOrder );
-      }
-
-      return 0;
-    }
-  }
-
-  //---------------------------------------------------------------------------
-  
+ 
   protected void Page_Load( object sender, EventArgs e )
   {
     Dictionary<string, Person> people = new Dictionary<string, Person>();
@@ -63,28 +30,30 @@ public partial class _Default : System.Web.UI.Page
   {
     StatusTypes = new Dictionary<string, Status>();
 
-    SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING );
-    connection.Open();
-
-    SqlDataReader reader =
-      new SqlCommand(
-        "SELECT * FROM StatusTypes",
-        connection ).ExecuteReader();
-
-    while( reader.Read() )
+    using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
     {
-      Status status = new Status
+      connection.Open();
+
+      var reader =
+        new SqlCommand(
+          "SELECT * FROM StatusTypes",
+          connection ).ExecuteReader();
+
+      using( reader )
       {
-        Id = reader.GetInt32( 0 ),
-        Name = reader.GetString( 1 ),
-        SortOrder = reader.GetInt32( 2 )
-      };
+        while( reader.Read() )
+        {
+          Status status = new Status
+          {
+            Id = reader.GetInt32( 0 ),
+            Name = reader.GetString( 1 ),
+            SortOrder = reader.GetInt32( 2 )
+          };
 
-      StatusTypes.Add( status.Name, status );
+          StatusTypes.Add( status.Name, status );
+        }
+      }
     }
-
-    reader.Close();
-    connection.Close();
   }
 
   //---------------------------------------------------------------------------
@@ -94,74 +63,75 @@ public partial class _Default : System.Web.UI.Page
     // Load people & status types from the db.
     people = new Dictionary<string, Person>();
 
-    SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING );
-    connection.Open();
-
-    SqlDataReader reader =
-      new SqlCommand(
-        "SELECT * FROM PeopleStatusView ORDER BY PersonName",
-        connection ).ExecuteReader();
-
-    while( reader.Read() )
+    using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
     {
-      // Read the values from the view.
-      string name = null;
-      string statusType = null;
-      int personId = -1;
-      int statusTypeId = -1;
+      connection.Open();
 
-      if( reader.IsDBNull( 0 ) == false )
+      var reader =
+        new SqlCommand(
+          "SELECT * FROM PeopleStatusView ORDER BY PersonName",
+          connection ).ExecuteReader();
+
+      using( reader )
       {
-        name = reader.GetString( 0 );
-      }
-
-      if( reader.IsDBNull( 1 ) == false )
-      {
-        statusType = reader.GetString( 1 );
-      }
-
-      if( reader.IsDBNull( 2 ) == false )
-      {
-        personId = reader.GetInt32( 2 );
-      }
-
-      if( reader.IsDBNull( 3 ) == false )
-      {
-        statusTypeId = reader.GetInt32( 3 );
-      }
-
-      // Add the person to our collection.
-      if( name != null &&
-          people.ContainsKey( name ) == false )
-      {
-        people.Add( name, new Person() );
-      }
-
-      // Retrieve the person from our collection.
-      Person person = null;
-
-      if( name != null )
-      {
-        person = people[ name ];
-
-        person.Id = personId;
-        person.Name = name;
-      }
-
-      // Add the status to both the current person (if one) and our collection
-      // of statue types.
-      if( statusType != null )
-      {
-        if( person != null )
+        while( reader.Read() )
         {
-          person.Status.Add( StatusTypes[ statusType ] );
+          // Read the values from the view.
+          string name = null;
+          string statusType = null;
+          int personId = -1;
+          int statusTypeId = -1;
+
+          if( reader.IsDBNull( 0 ) == false )
+          {
+            name = reader.GetString( 0 );
+          }
+
+          if( reader.IsDBNull( 1 ) == false )
+          {
+            statusType = reader.GetString( 1 );
+          }
+
+          if( reader.IsDBNull( 2 ) == false )
+          {
+            personId = reader.GetInt32( 2 );
+          }
+
+          if( reader.IsDBNull( 3 ) == false )
+          {
+            statusTypeId = reader.GetInt32( 3 );
+          }
+
+          // Add the person to our collection.
+          if( name != null &&
+              people.ContainsKey( name ) == false )
+          {
+            people.Add( name, new Person() );
+          }
+
+          // Retrieve the person from our collection.
+          Person person = null;
+
+          if( name != null )
+          {
+            person = people[ name ];
+
+            person.Id = personId;
+            person.Name = name;
+          }
+
+          // Add the status to both the current person (if one) and our collection
+          // of statue types.
+          if( statusType != null )
+          {
+            if( person != null )
+            {
+              person.Status.Add( StatusTypes[ statusType ] );
+            }
+          }
         }
       }
     }
-
-    // Clean up.
-    reader.Close();
-    connection.Close();
   }
 
   //---------------------------------------------------------------------------
