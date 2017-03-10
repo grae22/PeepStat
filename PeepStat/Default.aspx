@@ -9,7 +9,10 @@
 	<link rel="icon" href="team.png">
   </head>
   <body>
+  <img src="Logo.png" style="width:24px;height:24px;">
+  <font face="Arial" size="5" color="black">
   <b>Support Team Availability Matrix</b>
+  </font>
     <form id="Body" runat="server">
       <asp:table id="StatusTable" runat="server" CellPadding="5" />
     </form>
