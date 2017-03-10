@@ -1,106 +1,106 @@
--- Create PeepStat database
+-- Create TeamTracker database
 -----------------------------------------------------------------------------------------------------
 
 USE [master]
 GO
 
-/****** Object:  Database [PeepStat]    Script Date: 2017/03/09 10:03:47 ******/
-CREATE DATABASE [PeepStat]
+/****** Object:  Database [TeamTracker]    Script Date: 2017/03/09 10:03:47 ******/
+CREATE DATABASE [TeamTracker]
 
-ALTER DATABASE [PeepStat] SET COMPATIBILITY_LEVEL = 80
+ALTER DATABASE [TeamTracker] SET COMPATIBILITY_LEVEL = 80
 GO
 
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
-EXEC [PeepStat].[dbo].[sp_fulltext_database] @action = 'enable'
+EXEC [TeamTracker].[dbo].[sp_fulltext_database] @action = 'enable'
 end
 GO
 
-ALTER DATABASE [PeepStat] SET ANSI_NULL_DEFAULT OFF 
+ALTER DATABASE [TeamTracker] SET ANSI_NULL_DEFAULT OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET ANSI_NULLS OFF 
+ALTER DATABASE [TeamTracker] SET ANSI_NULLS OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET ANSI_PADDING OFF 
+ALTER DATABASE [TeamTracker] SET ANSI_PADDING OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET ANSI_WARNINGS OFF 
+ALTER DATABASE [TeamTracker] SET ANSI_WARNINGS OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET ARITHABORT OFF 
+ALTER DATABASE [TeamTracker] SET ARITHABORT OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET AUTO_CLOSE OFF 
+ALTER DATABASE [TeamTracker] SET AUTO_CLOSE OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET AUTO_SHRINK ON 
+ALTER DATABASE [TeamTracker] SET AUTO_SHRINK ON 
 GO
 
-ALTER DATABASE [PeepStat] SET AUTO_UPDATE_STATISTICS ON 
+ALTER DATABASE [TeamTracker] SET AUTO_UPDATE_STATISTICS ON 
 GO
 
-ALTER DATABASE [PeepStat] SET CURSOR_CLOSE_ON_COMMIT OFF 
+ALTER DATABASE [TeamTracker] SET CURSOR_CLOSE_ON_COMMIT OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET CURSOR_DEFAULT  GLOBAL 
+ALTER DATABASE [TeamTracker] SET CURSOR_DEFAULT  GLOBAL 
 GO
 
-ALTER DATABASE [PeepStat] SET CONCAT_NULL_YIELDS_NULL OFF 
+ALTER DATABASE [TeamTracker] SET CONCAT_NULL_YIELDS_NULL OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET NUMERIC_ROUNDABORT OFF 
+ALTER DATABASE [TeamTracker] SET NUMERIC_ROUNDABORT OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET QUOTED_IDENTIFIER OFF 
+ALTER DATABASE [TeamTracker] SET QUOTED_IDENTIFIER OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET RECURSIVE_TRIGGERS OFF 
+ALTER DATABASE [TeamTracker] SET RECURSIVE_TRIGGERS OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET  DISABLE_BROKER 
+ALTER DATABASE [TeamTracker] SET  DISABLE_BROKER 
 GO
 
-ALTER DATABASE [PeepStat] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+ALTER DATABASE [TeamTracker] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET DATE_CORRELATION_OPTIMIZATION OFF 
+ALTER DATABASE [TeamTracker] SET DATE_CORRELATION_OPTIMIZATION OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET TRUSTWORTHY OFF 
+ALTER DATABASE [TeamTracker] SET TRUSTWORTHY OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+ALTER DATABASE [TeamTracker] SET ALLOW_SNAPSHOT_ISOLATION OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET PARAMETERIZATION SIMPLE 
+ALTER DATABASE [TeamTracker] SET PARAMETERIZATION SIMPLE 
 GO
 
-ALTER DATABASE [PeepStat] SET READ_COMMITTED_SNAPSHOT OFF 
+ALTER DATABASE [TeamTracker] SET READ_COMMITTED_SNAPSHOT OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET HONOR_BROKER_PRIORITY OFF 
+ALTER DATABASE [TeamTracker] SET HONOR_BROKER_PRIORITY OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET RECOVERY SIMPLE 
+ALTER DATABASE [TeamTracker] SET RECOVERY SIMPLE 
 GO
 
-ALTER DATABASE [PeepStat] SET  MULTI_USER 
+ALTER DATABASE [TeamTracker] SET  MULTI_USER 
 GO
 
-ALTER DATABASE [PeepStat] SET PAGE_VERIFY CHECKSUM  
+ALTER DATABASE [TeamTracker] SET PAGE_VERIFY CHECKSUM  
 GO
 
-ALTER DATABASE [PeepStat] SET DB_CHAINING OFF 
+ALTER DATABASE [TeamTracker] SET DB_CHAINING OFF 
 GO
 
-ALTER DATABASE [PeepStat] SET  READ_WRITE 
+ALTER DATABASE [TeamTracker] SET  READ_WRITE 
 GO
 
 -- Create people table
 -----------------------------------------------------------------------------------------------------
 
-USE [PeepStat]
+USE [TeamTracker]
 GO
 
 /****** Object:  Table [dbo].[People]    Script Date: 2017/03/09 10:07:01 ******/
@@ -125,7 +125,7 @@ GO
 -- Create status types table
 -----------------------------------------------------------------------------------------------------
 
-USE [PeepStat]
+USE [TeamTracker]
 GO
 
 /****** Object:  Table [dbo].[StatusTypes]    Script Date: 2017/03/09 10:07:45 ******/
@@ -150,7 +150,7 @@ GO
 -- Create people status table
 -----------------------------------------------------------------------------------------------------
 
-USE [PeepStat]
+USE [TeamTracker]
 GO
 
 /****** Object:  Table [dbo].[PeopleStatus]    Script Date: 2017/03/09 10:08:14 ******/
@@ -184,7 +184,7 @@ GO
 -- Populate status types table
 -----------------------------------------------------------------------------------------------------
 
-USE [PeepStat]
+USE [TeamTracker]
 GO
 
 INSERT INTO [dbo].[StatusTypes]
@@ -214,7 +214,7 @@ GO
 -- Create people status view
 -----------------------------------------------------------------------------------------------------
 
-USE [PeepStat]
+USE [TeamTracker]
 GO
 
 /****** Object:  View [dbo].[PeopleStatusView]    Script Date: 2017/03/09 11:21:30 ******/
@@ -377,22 +377,22 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'PeopleStatusView'
 GO
 
--- Create peepstat login, user and set permissions, etc
+-- Create TeamTracker login, user and set permissions, etc
 -----------------------------------------------------------------------------------------------------
 
-CREATE LOGIN [PeepStatUser] WITH PASSWORD=N'PeepStatUser', DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+CREATE LOGIN [TeamTrackerUser] WITH PASSWORD=N'TeamTrackerUser', DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
 GO
 /*
 -- Sysadmin role just in case, disabled by default
-EXEC sys.sp_addsrvrolemember @loginame = N'PeepStatUser', @rolename = N'sysadmin'
+EXEC sys.sp_addsrvrolemember @loginame = N'TeamTrackerUser', @rolename = N'sysadmin'
 GO
 */
-USE [PeepStat]
+USE [TeamTracker]
 GO
-CREATE USER [PeepStatUser] FOR LOGIN [PeepStatUser]
+CREATE USER [TeamTrackerUser] FOR LOGIN [TeamTrackerUser]
 GO
 
-USE [PeepStat]
+USE [TeamTracker]
 GO
-EXEC sp_addrolemember N'db_owner', N'PeepStatUser'
+EXEC sp_addrolemember N'db_owner', N'TeamTrackerUser'
 GO
