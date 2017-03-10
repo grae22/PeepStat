@@ -78,6 +78,7 @@ public partial class _Default : System.Web.UI.Page
         {
           // Read the values from the view.
           string name = null;
+          string extension = null;
           string statusType = null;
           int personId = -1;
           int statusTypeId = -1;
@@ -102,6 +103,11 @@ public partial class _Default : System.Web.UI.Page
             statusTypeId = reader.GetInt32( 3 );
           }
 
+          if( reader.IsDBNull( 4 ) == false )
+          {
+            extension = reader.GetString( 4 );
+          }
+
           // Add the person to our collection.
           if( name != null &&
               people.ContainsKey( name ) == false )
@@ -118,6 +124,7 @@ public partial class _Default : System.Web.UI.Page
 
             person.Id = personId;
             person.Name = name;
+            person.Extension = ( extension == null ? "" : extension );
           }
 
           // Add the status to both the current person (if one) and our collection
@@ -162,6 +169,11 @@ public partial class _Default : System.Web.UI.Page
     header.Cells[ 0 ].Text = "Name";
     header.Cells[ 0 ].Font.Bold = true;
 
+    // Header cell for 'Extension'.
+    header.Cells.Add( new TableCell() );
+    header.Cells[ 1 ].Text = "Ext.";
+    header.Cells[ 1 ].Font.Bold = true;
+
     // Add each status type to the header.
     Dictionary<Status, int> statusToColumnIndex = new Dictionary<Status, int>();
 
@@ -169,7 +181,7 @@ public partial class _Default : System.Web.UI.Page
     {
       statusToColumnIndex.Add(
         status,
-        AddCellToHeaderRowIfNotFound( header, status.Name ) );
+        AddCellToHeaderRow( header, status.Name ) );
     }
     
     // Add each person and their statuses as a row.
@@ -181,6 +193,12 @@ public partial class _Default : System.Web.UI.Page
         person.Name,
         row,
         0,
+        HorizontalAlign.Left );
+
+      AddTextCellToRow(
+        person.Extension,
+        row,
+        1,
         HorizontalAlign.Left );
 
       foreach( Status status in statusTypes.Values )
@@ -204,18 +222,8 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  int AddCellToHeaderRowIfNotFound( TableRow row, string text )
+  int AddCellToHeaderRow( TableRow row, string text )
   {
-    for( int i = 0; i < row.Cells.Count; i++ )
-    {
-      TableCell cell = row.Cells[ i ];
-
-      if( cell.Text == text )
-      {
-        return i;
-      }
-    }
-
     var newCell = new TableCell();
 
     if( File.Exists( Server.MapPath( text + ".png" ) ) )

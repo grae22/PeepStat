@@ -226,7 +226,7 @@ GO
 
 CREATE VIEW [dbo].[PeopleStatusView]
 AS
-SELECT        TOP (100) PERCENT dbo.People.name AS PersonName, dbo.StatusTypes.name AS StatusTypeName, dbo.People.id AS PersonId, dbo.StatusTypes.id AS StatusTypeId
+SELECT        TOP (100) PERCENT dbo.People.name AS PersonName, dbo.StatusTypes.name AS StatusTypeName, dbo.People.id AS PersonId, dbo.StatusTypes.id AS StatusTypeId, dbo.People.ext
 FROM            dbo.StatusTypes FULL OUTER JOIN
                          dbo.PeopleStatus ON dbo.StatusTypes.id = dbo.PeopleStatus.statusTypeId FULL OUTER JOIN
                          dbo.People ON dbo.PeopleStatus.peopleId = dbo.People.id
@@ -304,12 +304,12 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "People"
+         Begin Table = "StatusTypes"
             Begin Extent = 
                Top = 6
-               Left = 38
+               Left = 454
                Bottom = 102
-               Right = 208
+               Right = 624
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -324,12 +324,12 @@ Begin DesignProperties =
             DisplayFlags = 280
             TopColumn = 0
          End
-         Begin Table = "StatusTypes"
+         Begin Table = "People"
             Begin Extent = 
                Top = 6
-               Left = 454
-               Bottom = 102
-               Right = 624
+               Left = 38
+               Bottom = 138
+               Right = 208
             End
             DisplayFlags = 280
             TopColumn = 0
