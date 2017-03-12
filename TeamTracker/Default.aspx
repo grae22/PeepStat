@@ -11,7 +11,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
-    <meta http-equiv="Refresh" content="60" />
+    <meta http-equiv="Refresh" content="60;url=Default.aspx" />
     <title>TeamTracker</title>
     <link rel="icon" href="resources/team.png" />
   </head>
