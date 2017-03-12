@@ -226,7 +226,7 @@ GO
 
 CREATE VIEW [dbo].[PeopleStatusView]
 AS
-SELECT        TOP (100) PERCENT dbo.People.name AS PersonName, dbo.StatusTypes.name AS StatusTypeName, dbo.People.id AS PersonId, dbo.StatusTypes.id AS StatusTypeId, dbo.People.ext AS PersonExtension
+SELECT        TOP (100) PERCENT dbo.People.name AS PersonName, dbo.StatusTypes.name AS StatusTypeName, dbo.People.id AS PersonId, dbo.StatusTypes.id AS StatusTypeId, dbo.People.contact AS PersonContact
 FROM            dbo.StatusTypes FULL OUTER JOIN
                          dbo.PeopleStatus ON dbo.StatusTypes.id = dbo.PeopleStatus.statusTypeId FULL OUTER JOIN
                          dbo.People ON dbo.PeopleStatus.peopleId = dbo.People.id
