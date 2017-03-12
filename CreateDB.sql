@@ -113,7 +113,7 @@ GO
 CREATE TABLE [dbo].[People](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](100) NOT NULL,
-	[ext] [nvarchar] (10) NOT NULL,
+	[contact] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_People] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
