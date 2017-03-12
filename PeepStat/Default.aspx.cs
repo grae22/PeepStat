@@ -8,6 +8,8 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
+  public const string ImagePath = "Resources/";
+
   Dictionary<string, Status> StatusTypes;
 
   //---------------------------------------------------------------------------
@@ -226,10 +228,10 @@ public partial class _Default : System.Web.UI.Page
   {
     var newCell = new TableCell();
 
-    if( File.Exists( Server.MapPath( text + ".png" ) ) )
+    if( File.Exists( Server.MapPath( ImagePath + text + ".png" ) ) )
     {
       var image = new Image();
-      image.ImageUrl = text + ".png";
+      image.ImageUrl = ImagePath + text + ".png";
       newCell.Controls.Add( image );
     }
     else
@@ -303,8 +305,8 @@ public partial class _Default : System.Web.UI.Page
     button.ID = string.Format( "{0}~{1}", peopleId, statusId );
     button.ImageUrl =
       statusActive ?
-      "yes.png" :
-      "no.png";
+      ImagePath + "yes.png" :
+      ImagePath + "no.png";
     button.ToolTip = statusActive ? "active" : "";
     button.Click += HandleStatusClick;
 
