@@ -2,6 +2,13 @@
 
 <!DOCTYPE html>
 
+<script lang="text/javascript">
+  function EditUserWithId( id )
+  {
+    window.location = "Default.aspx?EditPersonId=" + id;
+  }
+</script>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
     <meta http-equiv="Refresh" content="60" />
@@ -19,5 +26,5 @@
     <font face="Arial" size="1" color="black">
     TeamTracker v1.0 © GB & JM 2017
     </font>
-</body>
+  </body>
 </html>

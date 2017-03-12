@@ -8,9 +8,10 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
-  public const string ImagePath = "Resources/";
+  const string ImagePath = "Resources/";
 
   Dictionary<string, Status> StatusTypes;
+  int EditPersonId = -1;
 
   //---------------------------------------------------------------------------
  
@@ -18,17 +19,19 @@ public partial class _Default : System.Web.UI.Page
   {
     Dictionary<string, Person> people = new Dictionary<string, Person>();
 
-    PopulateStatusTypes();
-    PopulatePeople( out people );
+    int.TryParse( Request.QueryString[ "EditPersonId" ], out EditPersonId );
 
-    BuildTable( StatusTable,
-                people,
-                StatusTypes );
+    PopulateStatusTypesFromDb();
+    PopulatePeopleFromDb( out people );
+
+    BuildUiTable( StatusTable,
+                  people,
+                  StatusTypes );
   }
 
   //---------------------------------------------------------------------------
 
-  void PopulateStatusTypes()
+  void PopulateStatusTypesFromDb()
   {
     StatusTypes = new Dictionary<string, Status>();
 
@@ -60,7 +63,7 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void PopulatePeople( out Dictionary<string, Person> people )
+  void PopulatePeopleFromDb( out Dictionary<string, Person> people )
   {
     // Load people & status types from the db.
     people = new Dictionary<string, Person>();
@@ -85,30 +88,11 @@ public partial class _Default : System.Web.UI.Page
           int personId = -1;
           int statusTypeId = -1;
 
-          if( reader.IsDBNull( 0 ) == false )
-          {
-            name = reader.GetString( 0 );
-          }
-
-          if( reader.IsDBNull( 1 ) == false )
-          {
-            statusType = reader.GetString( 1 );
-          }
-
-          if( reader.IsDBNull( 2 ) == false )
-          {
-            personId = reader.GetInt32( 2 );
-          }
-
-          if( reader.IsDBNull( 3 ) == false )
-          {
-            statusTypeId = reader.GetInt32( 3 );
-          }
-
-          if( reader.IsDBNull( 4 ) == false )
-          {
-            extension = reader.GetString( 4 );
-          }
+          if( reader.IsDBNull( 0 ) == false ) name = reader.GetString( 0 );
+          if( reader.IsDBNull( 1 ) == false ) statusType = reader.GetString( 1 );
+          if( reader.IsDBNull( 2 ) == false ) personId = reader.GetInt32( 2 );
+          if( reader.IsDBNull( 3 ) == false ) statusTypeId = reader.GetInt32( 3 );
+          if( reader.IsDBNull( 4 ) == false ) extension = reader.GetString( 4 );
 
           // Add the person to our collection.
           if( name != null &&
@@ -145,10 +129,12 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
   
-  Table BuildTable( Table table,
-                    Dictionary<string, Person> people,
-                    Dictionary<string, Status> statusTypes )
+  Table BuildUiTable( Table table,
+                      Dictionary<string, Person> people,
+                      Dictionary<string, Status> statusTypes )
   {
+    table.Rows.Clear();
+
     // Build a dictonary of status-types sorted by sort-order.
     List<Status> sortedStatusTypes = new List<Status>();
 
@@ -189,10 +175,12 @@ public partial class _Default : System.Web.UI.Page
     // Add each person and their statuses as a row.
     foreach( Person person in people.Values )
     {
+      bool canEditThisPerson = ( person.Id == EditPersonId );
+
       var row = new TableRow();
       
-      AddTextCellToRow(
-        person.Name,
+      AddPersonToRow(
+        person,
         row,
         0,
         HorizontalAlign.Left );
@@ -205,15 +193,28 @@ public partial class _Default : System.Web.UI.Page
 
       foreach( Status status in statusTypes.Values )
       {
-        AddStatusToRow(
-          person.Id,
-          status.Id,
-          person.Status.Contains( status ),
-          row,
-          statusToColumnIndex[ status ] );
+        if( canEditThisPerson )
+        {
+          AddStatusToRow(
+            person.Id,
+            status.Id,
+            person.Status.Contains( status ),
+            row,
+            statusToColumnIndex[ status ] );
+        }
+        else
+        {
+          AddImageToRow(
+            person.Status.Contains( status ) ? ImagePath + "yes.png" : ImagePath + "no.png",
+            row,
+            statusToColumnIndex[ status ] );
+        }
       }
 
-      AddSelectAllOrNoneToRow( person.Id, row, row.Cells.Count );
+      if( canEditThisPerson )
+      {
+        AddSelectAllOrNoneToRow( person.Id, row, row.Cells.Count );
+      }
 
       table.Rows.Add( row );
     }
@@ -246,10 +247,10 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void AddTextCellToRow( string text,
-                         TableRow row,
-                         int column,
-                         HorizontalAlign align = HorizontalAlign.Center )
+  void AddPersonToRow( Person person,
+                       TableRow row,
+                       int column,
+                       HorizontalAlign align = HorizontalAlign.Center )
   {
     while( column > row.Cells.Count - 1 )
     {
@@ -258,7 +259,13 @@ public partial class _Default : System.Web.UI.Page
       row.Cells.Add( cell );
     }
 
-    row.Cells[ column ].Text = text;
+    var label = new Label();
+    label.Text = person.Name;
+    label.Attributes.Add(
+      "onclick",
+      string.Format( "EditUserWithId( {0} );", person.Id ) );
+
+    row.Cells[ column ].Controls.Add( label );
   }
 
   //---------------------------------------------------------------------------
@@ -314,6 +321,26 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
   
+  void AddImageToRow( string imagePath,
+                      TableRow row,
+                      int column,
+                      HorizontalAlign align = HorizontalAlign.Center )
+  {
+    while( column > row.Cells.Count - 1 )
+    {
+      row.Cells.Add( new TableCell() );
+    }
+
+    TableCell cell = row.Cells[ column ];
+    cell.HorizontalAlign = align;
+
+    var image = new Image();
+    image.ImageUrl = imagePath;
+
+    cell.Controls.Add( image );
+  }
+
+  //---------------------------------------------------------------------------
   void AddSelectAllOrNoneToRow( int peopleId,
                           TableRow row,
                           int column )
@@ -419,4 +446,12 @@ public partial class _Default : System.Web.UI.Page
   }
 
   //---------------------------------------------------------------------------  
+
+  protected void SetEditPersonId( int id )
+  {
+    EditPersonId = id;
+    Page_Load( null, null );
+  }
+
+  //---------------------------------------------------------------------------
 }
