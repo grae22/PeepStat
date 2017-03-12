@@ -396,3 +396,27 @@ USE [TeamTracker]
 GO
 EXEC sp_addrolemember N'db_owner', N'TeamTrackerUser'
 GO
+
+-- Create setting table
+-----------------------------------------------------------------------------------------------------
+
+USE [TeamTracker]
+GO
+
+/****** Object:  Table [dbo].[Setting]    Script Date: 03/12/2017 16:52:15 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Setting](
+	[SettingID] [smallint] IDENTITY(1,1) NOT NULL,
+	[SettingValue] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Setting] PRIMARY KEY CLUSTERED 
+(
+	[SettingID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
