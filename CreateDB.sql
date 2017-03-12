@@ -420,3 +420,13 @@ CREATE TABLE [dbo].[Setting](
 ) ON [PRIMARY]
 
 GO
+
+-- Populate setting table with defaults
+-----------------------------------------------------------------------------------------------------
+
+INSERT INTO [TeamTracker].[dbo].[Setting]
+           ([SettingValue])
+     VALUES
+           ('Team availability matrix'),
+           ('SIP')
+GO
