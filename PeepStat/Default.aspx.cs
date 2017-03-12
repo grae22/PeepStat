@@ -213,8 +213,7 @@ public partial class _Default : System.Web.UI.Page
           statusToColumnIndex[ status ] );
       }
 
-      AddSelectAllToRow( person.Id, row, row.Cells.Count );
-      AddSelectNoneToRow( person.Id, row, row.Cells.Count );
+      AddSelectAllOrNoneToRow( person.Id, row, row.Cells.Count );
 
       table.Rows.Add( row );
     }
@@ -315,7 +314,7 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
   
-  void AddSelectAllToRow( int peopleId,
+  void AddSelectAllOrNoneToRow( int peopleId,
                           TableRow row,
                           int column )
   {
@@ -324,10 +323,10 @@ public partial class _Default : System.Web.UI.Page
       var cell = new TableCell();
       row.Cells.Add( cell );
 
-      var button = new Button();
-      button.ID = "all_" + peopleId.ToString();
-      button.Text = "All";
-      button.Click += OnSelectAllClick;
+      var button = new ImageButton();
+      button.ID = "allOrNone_" + peopleId.ToString();
+      button.ImageUrl = ImagePath + "wand.png";
+      button.Click += OnSelectAllOrNoneClick;
 
       cell.Controls.Add( button );
     }
@@ -335,26 +334,6 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
   
-  void AddSelectNoneToRow( int peopleId,
-                           TableRow row,
-                           int column )
-  {
-    while( column > row.Cells.Count - 1 )
-    {
-      var cell = new TableCell();
-      row.Cells.Add( cell );
-
-      var button = new Button();
-      button.ID = "none_" + peopleId.ToString();
-      button.Text = "None";
-      button.Click += OnSelectNoneClick;
-
-      cell.Controls.Add( button );
-    }
-  }
-
-  //---------------------------------------------------------------------------
-
   void HandleStatusClick( object sender, EventArgs args )
   {
     if( sender is ImageButton == false )
@@ -399,77 +378,45 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void OnSelectAllClick( object sender, EventArgs args )
+  void OnSelectAllOrNoneClick( object sender, EventArgs args )
   {
-    if( sender is Button == false )
+    if( sender is ImageButton == false )
     {
       return;
     }
 
-    Button button = (Button)sender;
+    ImageButton button = (ImageButton)sender;
 
     // Extract the person id & status-type id.
-    int personId = int.Parse( button.ID.Replace( "all_", "" ) );
+    int personId = int.Parse( button.ID.Replace( "allOrNone_", "" ) );
 
-    // If the status was active then remove it from the PeopleStatus table,
-    // otherwise add it (to make the status active).
-    string command;
+    // First clear the person's active statuses.
+    string command =
+      string.Format(
+        "DELETE FROM PeopleStatus WHERE peopleId={0}",
+        personId );
 
-    foreach( Status status in StatusTypes.Values )
+    int rowsAffected = Database.ExecSql( command );
+
+    // If the person had at least one active status then we make all their statuses active,
+    // but if all their status were already active then want them all to be inactive now.
+    if( rowsAffected < StatusTypes.Count )
     {
-      command =
-        string.Format(
-          "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
-          personId,
-          status.Id );
+      foreach( Status status in StatusTypes.Values )
+      {
+        command =
+          string.Format(
+            "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
+            personId,
+            status.Id );
 
-      Database.ExecSql( command );
-
-      command =
-        string.Format(
-          "INSERT INTO PeopleStatus ( peopleId, statusTypeId ) VALUES( {0}, {1} )",
-          personId,
-          status.Id );
-
-      Database.ExecSql( command );
+        Database.ExecSql( command );
+      }
     }
 
     // Refresh the page.
     Response.Redirect( Request.RawUrl );
   }
 
-  //---------------------------------------------------------------------------
-
-  void OnSelectNoneClick( object sender, EventArgs args )
-  {
-    if( sender is Button == false )
-    {
-      return;
-    }
-
-    Button button = (Button)sender;
-
-    // Extract the person id & status-type id.
-    int personId = int.Parse( button.ID.Replace( "none_", "" ) );
-
-    // If the status was active then remove it from the PeopleStatus table,
-    // otherwise add it (to make the status active).
-    string command;
-
-    foreach( Status status in StatusTypes.Values )
-    {
-      command =
-        string.Format(
-          "DELETE FROM PeopleStatus WHERE peopleId={0} AND statusTypeId={1}",
-          personId,
-          status.Id );
-
-      Database.ExecSql( command );
-    }
-
-    // Refresh the page.
-    Response.Redirect( Request.RawUrl );
-  }
-
-  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------  
 }

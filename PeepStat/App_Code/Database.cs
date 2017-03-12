@@ -19,13 +19,13 @@ public class Database
 
   //---------------------------------------------------------------------------
 
-  public static void ExecSql( string command )
+  public static int ExecSql( string command )
   {
     using( SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING ) )
     {
       connection.Open();
 
-      new SqlCommand( command, connection ).ExecuteNonQuery();
+      return new SqlCommand( command, connection ).ExecuteNonQuery();
     }
   }
 
