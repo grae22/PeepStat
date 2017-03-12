@@ -83,7 +83,7 @@ public partial class _Default : System.Web.UI.Page
         {
           // Read the values from the view.
           string name = null;
-          string extension = null;
+          string contact = null;
           string statusType = null;
           int personId = -1;
           int statusTypeId = -1;
@@ -92,7 +92,7 @@ public partial class _Default : System.Web.UI.Page
           if( reader.IsDBNull( 1 ) == false ) statusType = reader.GetString( 1 );
           if( reader.IsDBNull( 2 ) == false ) personId = reader.GetInt32( 2 );
           if( reader.IsDBNull( 3 ) == false ) statusTypeId = reader.GetInt32( 3 );
-          if( reader.IsDBNull( 4 ) == false ) extension = reader.GetString( 4 );
+          if( reader.IsDBNull( 4 ) == false ) contact = reader.GetString( 4 );
 
           // Add the person to our collection.
           if( name != null &&
@@ -110,7 +110,7 @@ public partial class _Default : System.Web.UI.Page
 
             person.Id = personId;
             person.Name = name;
-            person.Extension = ( extension == null ? "" : extension );
+            person.Contact = ( contact == null ? "" : contact );
           }
 
           // Add the status to both the current person (if one) and our collection
@@ -152,14 +152,14 @@ public partial class _Default : System.Web.UI.Page
     var header = new TableRow();
     table.Rows.Add( header );
 
-    // Header cell for 'Name'.
+    // Header cell for 'Team member'.
     header.Cells.Add( new TableCell() );
-    header.Cells[ 0 ].Text = "Name";
+    header.Cells[ 0 ].Text = "Team member";
     header.Cells[ 0 ].Font.Bold = true;
 
-    // Header cell for 'Extension'.
+    // Header cell for 'Contact'.
     header.Cells.Add( new TableCell() );
-    header.Cells[ 1 ].Text = "Ext.";
+    header.Cells[ 1 ].Text = "Contact";
     header.Cells[ 1 ].Font.Bold = true;
 
     // Add each status type to the header.
@@ -185,8 +185,8 @@ public partial class _Default : System.Web.UI.Page
         0,
         HorizontalAlign.Left );
 
-      AddSipLinkCellToRow(
-        person.Extension,
+      AddContactLinkCellToRow(
+        person.Contact,
         row,
         1,
         HorizontalAlign.Left );
@@ -270,7 +270,7 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void AddSipLinkCellToRow( string text,
+  void AddContactLinkCellToRow( string text,
                             TableRow row,
                             int column,
                             HorizontalAlign align = HorizontalAlign.Center )
