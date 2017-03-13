@@ -21,8 +21,9 @@ public partial class _Default : System.Web.UI.Page
 
     int.TryParse( Request.QueryString[ "EditPersonId" ], out EditPersonId );
 
-    PopulateStatusTypesFromDb();
-    PopulatePeopleFromDb( out people );
+    GetPageHeaderFromDb();
+    GetStatusTypesFromDb();
+    GetPeopleFromDb( out people );
 
     BuildUiTable( StatusTable,
                   people,
@@ -31,7 +32,32 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void PopulateStatusTypesFromDb()
+  void GetPageHeaderFromDb()
+  {
+    using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
+    {
+      connection.Open();
+
+      SqlDataReader reader =
+        new SqlCommand(
+          "SELECT Value FROM Setting WHERE [Key]='PageHeader'",
+          connection ).ExecuteReader();
+
+      using( reader )
+      {
+        reader.Read();
+
+        if( reader.IsDBNull( 0 ) == false )
+        {
+          PageHeader.Text = reader.GetString( 0 );
+        }
+      }
+    }
+  }
+
+  //---------------------------------------------------------------------------
+
+  void GetStatusTypesFromDb()
   {
     StatusTypes = new Dictionary<string, Status>();
 
@@ -63,7 +89,7 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void PopulatePeopleFromDb( out Dictionary<string, Person> people )
+  void GetPeopleFromDb( out Dictionary<string, Person> people )
   {
     // Load people & status types from the db.
     people = new Dictionary<string, Person>();

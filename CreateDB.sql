@@ -411,12 +411,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[Setting](
-	[SettingID] [smallint] IDENTITY(1,1) NOT NULL,
-	[SettingValue] [nvarchar](100) NULL,
- CONSTRAINT [PK_Setting] PRIMARY KEY CLUSTERED 
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[key] [nvarchar](50) NOT NULL,
+	[value] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Setting_1] PRIMARY KEY CLUSTERED 
 (
-	[SettingID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [IX_Setting_UniqueKey] UNIQUE NONCLUSTERED 
+(
+	[key] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
@@ -425,8 +430,8 @@ GO
 -----------------------------------------------------------------------------------------------------
 
 INSERT INTO [TeamTracker].[dbo].[Setting]
-           ([SettingValue])
+           ([key],[value])
      VALUES
-           ('Team availability matrix'),
-           ('SIP')
+           ('PageHeader','Team availability matrix'),
+           ('SettingsPassword','admin')
 GO
