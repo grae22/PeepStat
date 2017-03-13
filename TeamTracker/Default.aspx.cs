@@ -368,6 +368,7 @@ public partial class _Default : System.Web.UI.Page
     contactsImage.AlternateText = "...";
     contactsImage.ImageAlign = ImageAlign.AbsMiddle;
     contactsImage.Style.Add( "padding-left", "2px" );
+    contactsImage.Style.Add( "cursor", "pointer" );
     contactsImage.Attributes.Add(
       "onclick",
       string.Format(
