@@ -113,7 +113,7 @@ GO
 CREATE TABLE [dbo].[People](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](100) NOT NULL,
-	[ext] [nvarchar] (10) NOT NULL,
+	[contact] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_People] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -226,7 +226,7 @@ GO
 
 CREATE VIEW [dbo].[PeopleStatusView]
 AS
-SELECT        TOP (100) PERCENT dbo.People.name AS PersonName, dbo.StatusTypes.name AS StatusTypeName, dbo.People.id AS PersonId, dbo.StatusTypes.id AS StatusTypeId, dbo.People.ext AS PersonExtension
+SELECT        TOP (100) PERCENT dbo.People.name AS PersonName, dbo.StatusTypes.name AS StatusTypeName, dbo.People.id AS PersonId, dbo.StatusTypes.id AS StatusTypeId, dbo.People.contact AS PersonContact
 FROM            dbo.StatusTypes FULL OUTER JOIN
                          dbo.PeopleStatus ON dbo.StatusTypes.id = dbo.PeopleStatus.statusTypeId FULL OUTER JOIN
                          dbo.People ON dbo.PeopleStatus.peopleId = dbo.People.id
@@ -411,12 +411,27 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[Setting](
-	[SettingID] [smallint] IDENTITY(1,1) NOT NULL,
-	[SettingValue] [nvarchar](100) NULL,
- CONSTRAINT [PK_Setting] PRIMARY KEY CLUSTERED 
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[key] [nvarchar](50) NOT NULL,
+	[value] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Setting_1] PRIMARY KEY CLUSTERED 
 (
-	[SettingID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [IX_Setting_UniqueKey] UNIQUE NONCLUSTERED 
+(
+	[key] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
+GO
+
+-- Populate setting table with defaults
+-----------------------------------------------------------------------------------------------------
+
+INSERT INTO [TeamTracker].[dbo].[Setting]
+           ([key],[value])
+     VALUES
+           ('PageHeader','Team availability matrix'),
+           ('SettingsPassword','admin')
 GO

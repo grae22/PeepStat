@@ -8,7 +8,12 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
-  const string ImagePath = "Resources/";
+  const string IMAGE_PATH = "Resources/";
+  const string IMAGE_EXT = ".png";
+  const string IMAGE_PATH_SETTINGS = IMAGE_PATH + "settings.png";
+  const string IMAGE_PATH_NO = IMAGE_PATH + "no.png";
+  const string IMAGE_PATH_YES = IMAGE_PATH + "yes.png";
+  const string IMAGE_PATH_WAND = IMAGE_PATH + "wand.png";
 
   Dictionary<string, Status> StatusTypes;
   int EditPersonId = -1;
@@ -21,8 +26,9 @@ public partial class _Default : System.Web.UI.Page
 
     int.TryParse( Request.QueryString[ "EditPersonId" ], out EditPersonId );
 
-    PopulateStatusTypesFromDb();
-    PopulatePeopleFromDb( out people );
+    GetPageHeaderFromDb();
+    GetStatusTypesFromDb();
+    GetPeopleFromDb( out people );
 
     BuildUiTable( StatusTable,
                   people,
@@ -31,7 +37,32 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void PopulateStatusTypesFromDb()
+  void GetPageHeaderFromDb()
+  {
+    using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
+    {
+      connection.Open();
+
+      SqlDataReader reader =
+        new SqlCommand(
+          "SELECT Value FROM Setting WHERE [Key]='PageHeader'",
+          connection ).ExecuteReader();
+
+      using( reader )
+      {
+        reader.Read();
+
+        if( reader.IsDBNull( 0 ) == false )
+        {
+          PageHeader.Text = reader.GetString( 0 );
+        }
+      }
+    }
+  }
+
+  //---------------------------------------------------------------------------
+
+  void GetStatusTypesFromDb()
   {
     StatusTypes = new Dictionary<string, Status>();
 
@@ -63,7 +94,7 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void PopulatePeopleFromDb( out Dictionary<string, Person> people )
+  void GetPeopleFromDb( out Dictionary<string, Person> people )
   {
     // Load people & status types from the db.
     people = new Dictionary<string, Person>();
@@ -83,7 +114,7 @@ public partial class _Default : System.Web.UI.Page
         {
           // Read the values from the view.
           string name = null;
-          string extension = null;
+          string contact = null;
           string statusType = null;
           int personId = -1;
           int statusTypeId = -1;
@@ -92,7 +123,7 @@ public partial class _Default : System.Web.UI.Page
           if( reader.IsDBNull( 1 ) == false ) statusType = reader.GetString( 1 );
           if( reader.IsDBNull( 2 ) == false ) personId = reader.GetInt32( 2 );
           if( reader.IsDBNull( 3 ) == false ) statusTypeId = reader.GetInt32( 3 );
-          if( reader.IsDBNull( 4 ) == false ) extension = reader.GetString( 4 );
+          if( reader.IsDBNull( 4 ) == false ) contact = reader.GetString( 4 );
 
           // Add the person to our collection.
           if( name != null &&
@@ -110,7 +141,7 @@ public partial class _Default : System.Web.UI.Page
 
             person.Id = personId;
             person.Name = name;
-            person.Extension = ( extension == null ? "" : extension );
+            person.Contact = ( contact == null ? "" : contact );
           }
 
           // Add the status to both the current person (if one) and our collection
@@ -152,14 +183,14 @@ public partial class _Default : System.Web.UI.Page
     var header = new TableRow();
     table.Rows.Add( header );
 
-    // Header cell for 'Name'.
+    // Header cell for 'Team member'.
     header.Cells.Add( new TableCell() );
-    header.Cells[ 0 ].Text = "Name";
+    header.Cells[ 0 ].Text = "Team member";
     header.Cells[ 0 ].Font.Bold = true;
 
-    // Header cell for 'Extension'.
+    // Header cell for 'Contact'.
     header.Cells.Add( new TableCell() );
-    header.Cells[ 1 ].Text = "Ext.";
+    header.Cells[ 1 ].Text = "Contact";
     header.Cells[ 1 ].Font.Bold = true;
 
     // Add each status type to the header.
@@ -171,6 +202,16 @@ public partial class _Default : System.Web.UI.Page
         status,
         AddCellToHeaderRow( header, status.Name ) );
     }
+
+    // Add settings link.
+    var settingsImage = new Image();
+    settingsImage.ImageUrl = IMAGE_PATH_SETTINGS;
+    settingsImage.Attributes.Add( "onclick", "window.location='SettingsLogin.aspx'" );
+    settingsImage.Style.Add( "cursor", "pointer" );
+
+    header.Cells.Add( new TableCell() );
+    TableCell settingsCell = header.Cells[ header.Cells.Count - 1 ];
+    settingsCell.Controls.Add( settingsImage );
     
     // Add each person and their statuses as a row.
     foreach( Person person in people.Values )
@@ -185,8 +226,8 @@ public partial class _Default : System.Web.UI.Page
         0,
         HorizontalAlign.Left );
 
-      AddSipLinkCellToRow(
-        person.Extension,
+      AddContactLinkCellToRow(
+        person.Contact,
         row,
         1,
         HorizontalAlign.Left );
@@ -205,7 +246,7 @@ public partial class _Default : System.Web.UI.Page
         else
         {
           AddImageToRow(
-            person.Status.Contains( status ) ? ImagePath + "yes.png" : ImagePath + "no.png",
+            person.Status.Contains( status ) ? IMAGE_PATH_YES : IMAGE_PATH_NO,
             row,
             statusToColumnIndex[ status ] );
         }
@@ -228,10 +269,12 @@ public partial class _Default : System.Web.UI.Page
   {
     var newCell = new TableCell();
 
-    if( File.Exists( Server.MapPath( ImagePath + text + ".png" ) ) )
+    string imageFilename = IMAGE_PATH + text + IMAGE_EXT;
+
+    if( File.Exists( Server.MapPath( imageFilename ) ) )
     {
       var image = new Image();
-      image.ImageUrl = ImagePath + text + ".png";
+      image.ImageUrl = imageFilename;
       newCell.Controls.Add( image );
     }
     else
@@ -270,7 +313,7 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void AddSipLinkCellToRow( string text,
+  void AddContactLinkCellToRow( string text,
                             TableRow row,
                             int column,
                             HorizontalAlign align = HorizontalAlign.Center )
@@ -309,11 +352,9 @@ public partial class _Default : System.Web.UI.Page
 
     var button = new ImageButton();
     button.ID = string.Format( "{0}~{1}", peopleId, statusId );
-    button.ImageUrl =
-      statusActive ?
-      ImagePath + "yes.png" :
-      ImagePath + "no.png";
-    button.ToolTip = statusActive ? "active" : "";
+    button.ImageUrl = statusActive ? IMAGE_PATH_YES : IMAGE_PATH_NO;
+    button.Attributes.Add( "status", statusActive ? "active" : "" );
+    button.Style.Add( "cursor", "pointer" );
     button.Click += HandleStatusClick;
 
     cell.Controls.Add( button );
@@ -352,7 +393,7 @@ public partial class _Default : System.Web.UI.Page
 
       var button = new ImageButton();
       button.ID = "allOrNone_" + peopleId.ToString();
-      button.ImageUrl = ImagePath + "wand.png";
+      button.ImageUrl = IMAGE_PATH_WAND;
       button.Click += OnSelectAllOrNoneClick;
 
       cell.Controls.Add( button );
@@ -380,7 +421,7 @@ public partial class _Default : System.Web.UI.Page
     // otherwise add it (to make the status active).
     string command;
 
-    if( button.ToolTip == "active" )
+    if( button.Attributes[ "status" ] == "active" )
     {
       command =
         string.Format(
