@@ -339,7 +339,7 @@ public partial class _Default : System.Web.UI.Page
     contactsImage.Style.Add( "padding-left", "2px" );
     contactsImage.Attributes.Add(
       "onclick",
-      string.Format( "ShowContactInfo( '{0}' )", contactsImage.ID ) );
+      string.Format( "ShowContactInfo( '{0}', '{1}' )", contactsImage.ID, "a;b;c" ) );
 
     row.Cells[ column ].Controls.Add( contactsImage );
   }

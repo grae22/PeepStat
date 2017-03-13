@@ -8,7 +8,7 @@
     window.location = "Default.aspx?EditPersonId=" + id;
   }
 
-  function ShowContactInfo( parentControlName )
+  function ShowContactInfo( parentControlName, contactsDelimStr )
   {
     var panel = document.getElementById( "ContactPanel" );
     var parent = document.getElementById( parentControlName );
@@ -17,6 +17,27 @@
     panel.style.display = 'block';
     panel.style.left = parentRect.right + 'px';
     panel.style.top = parentRect.top + 'px';
+
+    var contacts = contactsDelimStr.split( ';' );
+
+    while( panel.childNodes.length > 2 )
+    {
+      if( panel.lastChild.className != "w3-closebtn" )
+      {
+        panel.removeChild( panel.lastChild );
+      }
+    }
+
+    for( i = 0; i < contacts.length; i++ )
+    {
+      var link = document.createElement( 'a' );
+      link.text = contacts[ i ];
+      link.href = contacts[ i ];
+      link.style.color = 'white';
+
+      panel.appendChild( document.createElement( "br" ) );
+      panel.appendChild( link );
+    }
   }
 </script>
 
