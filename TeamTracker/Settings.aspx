@@ -25,12 +25,12 @@
           AutoGenerateColumns="false"
           DataKeyNames="id"
           ShowHeader="true"
-          ShowFooter="true">
+          ShowFooter="false">
           <AlternatingRowStyle BackColor="LightBlue" />
           <Columns>
             <asp:CommandField
               ShowEditButton="true"
-              ShowDeleteButton="true" />
+              ShowDeleteButton="false" />
             <asp:BoundField
               HeaderText="Key"
               ReadOnly="false"
