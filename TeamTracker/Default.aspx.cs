@@ -314,9 +314,9 @@ public partial class _Default : System.Web.UI.Page
   //---------------------------------------------------------------------------
 
   void AddContactLinkCellToRow( string text,
-                            TableRow row,
-                            int column,
-                            HorizontalAlign align = HorizontalAlign.Center )
+                                TableRow row,
+                                int column,
+                                HorizontalAlign align = HorizontalAlign.Center )
   {
     while( column > row.Cells.Count - 1 )
     {
@@ -331,6 +331,17 @@ public partial class _Default : System.Web.UI.Page
     link.Text = link.NavigateUrl;
     
     row.Cells[ column ].Controls.Add( link );
+
+    var contactsImage = new Image();
+    contactsImage.ID = "contact_" + text;
+    contactsImage.AlternateText = "...";
+    contactsImage.ImageAlign = ImageAlign.AbsMiddle;
+    contactsImage.Style.Add( "padding-left", "2px" );
+    contactsImage.Attributes.Add(
+      "onclick",
+      string.Format( "ShowContactInfo( '{0}' )", contactsImage.ID ) );
+
+    row.Cells[ column ].Controls.Add( contactsImage );
   }
   
   //---------------------------------------------------------------------------

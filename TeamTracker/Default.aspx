@@ -7,6 +7,17 @@
   {
     window.location = "Default.aspx?EditPersonId=" + id;
   }
+
+  function ShowContactInfo( parentControlName )
+  {
+    var panel = document.getElementById( "ContactPanel" );
+    var parent = document.getElementById( parentControlName );
+    var parentRect = parent.getBoundingClientRect();
+
+    panel.style.display = 'block';
+    panel.style.left = parentRect.right + 'px';
+    panel.style.top = parentRect.top + 'px';
+  }
 </script>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -23,6 +34,24 @@
     <form id="Body" runat="server">
       <asp:Table ID="StatusTable" runat="server" CellPadding="5" />
     </form>
+    <div
+      id="ContactPanel"
+      class="w3-panel"
+      style="
+        border:black;
+        border-style:solid;
+        border-width:1px;
+        background-color:#00aaff;
+        position:absolute;
+        opacity:1.0;
+        visibility:visible;
+        display:none;
+        width:100px;
+        height:100px">
+      <span
+        class="w3-closebtn"
+        onclick="this.parentElement.style.display='none'">X</span>
+    </div>
     <font face="Arial" size="1" color="black">
     TeamTracker v1.0 © GB & JM 2017
     </font>
