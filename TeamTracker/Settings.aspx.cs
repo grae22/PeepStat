@@ -15,7 +15,8 @@ public partial class Settings : System.Web.UI.Page
 
     dataSource.ConnectionString = Database.DB_CONNECTION_STRING;
     NewSetting.Click += OnNewClick;
-    settingsView.Focus();
+
+    DummyToPreventAddingNewSettingByMistake.Focus();
   }
 
   //---------------------------------------------------------------------------
@@ -26,7 +27,7 @@ public partial class Settings : System.Web.UI.Page
     Database.ExecSql( "INSERT INTO Setting VALUES ( 'New Key', 'New Value' )" );
     
     settingsView.DataBind();
-    settingsView.Focus();
+    DummyToPreventAddingNewSettingByMistake.Focus();
   }
 
   //---------------------------------------------------------------------------

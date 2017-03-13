@@ -41,6 +41,7 @@
               DataField="value" />
           </Columns>
         </asp:GridView>
+        <asp:Button ID="DummyToPreventAddingNewSettingByMistake" runat="server" Text="" Style="display: none;" />
         <asp:Button ID="NewSetting" runat="server" Text="New" />
       </div>
     </form>
