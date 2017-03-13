@@ -363,6 +363,8 @@ public partial class _Default : System.Web.UI.Page
     var contactsImage = new Image();
     contactsImage.ID = "contact_" + text;
     contactsImage.ImageUrl = IMAGE_PATH + "team.png";
+    contactsImage.Width = 16;
+    contactsImage.Height = 16;
     contactsImage.AlternateText = "...";
     contactsImage.ImageAlign = ImageAlign.AbsMiddle;
     contactsImage.Style.Add( "padding-left", "2px" );
