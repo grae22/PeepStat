@@ -28,11 +28,11 @@
       }
     }
 
-    for( i = 0; i < contacts.length; i++ )
+    for( i = 0; i < contacts.length - 2; i += 3 )
     {
       var link = document.createElement( 'a' );
-      link.text = contacts[ i ];
-      link.href = contacts[ i ];
+      link.text = contacts[ i ] + " (" + contacts[ i + 1 ] + ')';
+      link.href = contacts[ i + 2 ] + ':' + contacts[ i + 1 ];
       link.style.color = 'white';
 
       panel.appendChild( document.createElement( "br" ) );
@@ -67,7 +67,7 @@
         opacity:1.0;
         visibility:visible;
         display:none;
-        width:100px;
+        width:200px;
         height:100px">
       <span
         class="w3-closebtn"

@@ -227,6 +227,7 @@ public partial class _Default : System.Web.UI.Page
         HorizontalAlign.Left );
 
       AddContactLinkCellToRow(
+        person,
         person.Contact,
         row,
         1,
@@ -313,7 +314,8 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void AddContactLinkCellToRow( string text,
+  void AddContactLinkCellToRow( Person person,
+                                string text,
                                 TableRow row,
                                 int column,
                                 HorizontalAlign align = HorizontalAlign.Center )
@@ -332,6 +334,32 @@ public partial class _Default : System.Web.UI.Page
     
     row.Cells[ column ].Controls.Add( link );
 
+    List<string> contacts = new List<string>();
+
+    using( SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
+    {
+      connection.Open();
+
+      SqlDataReader reader =
+        new SqlCommand(
+          string.Format(
+            "SELECT contactName, contactAddress, hyperlinkPrefix " +
+              "FROM PeopleContactView " +
+              "WHERE peopleId={0}",
+            person.Id ),
+          connection ).ExecuteReader();
+
+      using( reader )
+      {
+        while( reader.Read() )
+        {
+          contacts.Add( reader.GetString( 0 ) );
+          contacts.Add( reader.GetString( 1 ) );
+          contacts.Add( reader.GetString( 2 ) );
+        }
+      }
+    }
+
     var contactsImage = new Image();
     contactsImage.ID = "contact_" + text;
     contactsImage.AlternateText = "...";
@@ -339,7 +367,10 @@ public partial class _Default : System.Web.UI.Page
     contactsImage.Style.Add( "padding-left", "2px" );
     contactsImage.Attributes.Add(
       "onclick",
-      string.Format( "ShowContactInfo( '{0}', '{1}' )", contactsImage.ID, "a;b;c" ) );
+      string.Format(
+        "ShowContactInfo( '{0}', '{1}' )",
+        contactsImage.ID,
+        string.Join( ";", contacts ) ) );
 
     row.Cells[ column ].Controls.Add( contactsImage );
   }
