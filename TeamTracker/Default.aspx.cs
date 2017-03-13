@@ -349,7 +349,8 @@ public partial class _Default : System.Web.UI.Page
       statusActive ?
       ImagePath + "yes.png" :
       ImagePath + "no.png";
-    button.ToolTip = statusActive ? "active" : "";
+    button.Attributes.Add( "status", statusActive ? "active" : "" );
+    button.Style.Add( "cursor", "pointer" );
     button.Click += HandleStatusClick;
 
     cell.Controls.Add( button );
@@ -416,7 +417,7 @@ public partial class _Default : System.Web.UI.Page
     // otherwise add it (to make the status active).
     string command;
 
-    if( button.ToolTip == "active" )
+    if( button.Attributes[ "status" ] == "active" )
     {
       command =
         string.Format(
