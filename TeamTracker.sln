@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "PeepStat", "PeepStat", "{787E005C-0480-4EF9-BEDF-297F3890058D}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "TeamTracker", "TeamTracker", "{787E005C-0480-4EF9-BEDF-297F3890058D}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_59041"
-		Debug.AspNetCompiler.PhysicalPath = "PeepStat\"
+		Debug.AspNetCompiler.PhysicalPath = "TeamTracker\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59041\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost_59041"
-		Release.AspNetCompiler.PhysicalPath = "PeepStat\"
+		Release.AspNetCompiler.PhysicalPath = "TeamTracker\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59041\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "59041"
-		SlnRelativePath = "PeepStat\"
+		SlnRelativePath = "TeamTracker\"
 		DefaultWebSiteLanguage = "Visual C#"
 	EndProjectSection
 EndProject
