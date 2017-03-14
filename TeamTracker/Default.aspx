@@ -64,7 +64,7 @@
         border-width:1px;
         background-color:#00aaff;
         position:absolute;
-        opacity:1.0;
+        opacity:0.8;
         visibility:visible;
         display:none;
         width:200px;
