@@ -8,11 +8,20 @@
     window.location = "Default.aspx?EditPersonId=" + id;
   }
 
-  function ShowContactInfo( parentControlName, contactsDelimStr )
+  function ShowContactInfo( personId,
+                            parentControlName,
+                            contactsDelimStr )
   {
     var panel = document.getElementById( "ContactPanel" );
     var parent = document.getElementById( parentControlName );
     var parentRect = parent.getBoundingClientRect();
+
+    if( panel.style.display == 'block' &&
+        panel.attributes[ "personId" ] == personId )
+    {
+      panel.style.display = 'none';
+      return;
+    }
 
     panel.style.display = 'block';
     panel.style.left = parentRect.right + 'px';
@@ -20,7 +29,7 @@
 
     var contacts = contactsDelimStr.split( ';' );
 
-    while( panel.childNodes.length > 2 )
+    while( panel.childNodes.length > 0 )
     {
       if( panel.lastChild.className != "w3-closebtn" )
       {
@@ -35,9 +44,11 @@
       link.href = contacts[ i + 2 ] + ':' + contacts[ i + 1 ];
       link.style.color = 'white';
 
-      panel.appendChild( document.createElement( "br" ) );
       panel.appendChild( link );
+      panel.appendChild( document.createElement( "br" ) );
     }
+
+    panel.attributes[ "personId" ] = personId;
   }
 </script>
 
@@ -64,14 +75,11 @@
         border-width:1px;
         background-color:#00aaff;
         position:absolute;
-        opacity:0.8;
+        opacity:0.9;
         visibility:visible;
         display:none;
-        width:200px;
-        height:100px">
-      <span
-        class="w3-closebtn"
-        onclick="this.parentElement.style.display='none'">X</span>
+        width:250px;
+        height:75px">
     </div>
     <font face="Arial" size="1" color="black">
     TeamTracker v1.0 © GB & JM 2017
