@@ -1,23 +1,21 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 
 public class Database
 {
   //---------------------------------------------------------------------------
 
-  public const string DB_SERVER_NAME = @"graemepc\sqlexpress";
+  public const string DB_SERVER_NAME = @"graemeb-pc\sqlexpress";
   public const string DB_NAME = "TeamTracker";
   public const string DB_USERNAME = "TeamTrackerUser";
   public const string DB_PASSWORD = "TeamTrackerUser";
 
   public static readonly string DB_CONNECTION_STRING =
-    Environment.GetEnvironmentVariable( "SQLAZURECONNSTR_defaultConnection" ); 
-    //string.Format(
-    //  "Server={0};Database={1};User Id={2};Password={3};",
-    //  DB_SERVER_NAME,
-    //  DB_NAME,
-    //  DB_USERNAME,
-    //  DB_PASSWORD );
+    string.Format(
+      "Server={0};Database={1};User Id={2};Password={3};",
+      DB_SERVER_NAME,
+      DB_NAME,
+      DB_USERNAME,
+      DB_PASSWORD );
 
   //---------------------------------------------------------------------------
 
