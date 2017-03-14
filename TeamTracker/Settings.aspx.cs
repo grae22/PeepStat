@@ -14,20 +14,6 @@ public partial class Settings : System.Web.UI.Page
     }
 
     dataSource.ConnectionString = Database.DB_CONNECTION_STRING;
-    NewSetting.Click += OnNewClick;
-
-    DummyToPreventAddingNewSettingByMistake.Focus();
-  }
-
-  //---------------------------------------------------------------------------
-
-  void OnNewClick( object sender, EventArgs e )
-  {
-    Database.ExecSql( "DELETE FROM Setting WHERE [Key]='New Key'" );
-    Database.ExecSql( "INSERT INTO Setting VALUES ( 'New Key', 'New Value' )" );
-    
-    settingsView.DataBind();
-    DummyToPreventAddingNewSettingByMistake.Focus();
   }
 
   //---------------------------------------------------------------------------
