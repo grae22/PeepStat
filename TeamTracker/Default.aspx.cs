@@ -362,7 +362,7 @@ public partial class _Default : System.Web.UI.Page
 
     var contactsImage = new Image();
     contactsImage.ID = "contact_" + text;
-    contactsImage.ImageUrl = IMAGE_PATH + "team.png";
+    contactsImage.ImageUrl = IMAGE_PATH + "dropdown.png";
     contactsImage.Width = 16;
     contactsImage.Height = 16;
     contactsImage.AlternateText = "...";
