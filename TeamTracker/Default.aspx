@@ -3,15 +3,20 @@
 <!DOCTYPE html>
 
 <script lang="text/javascript">
+
+  var previousDropdownIconId = null;
+
   function EditUserWithId( id )
   {
     window.location = "Default.aspx?EditPersonId=" + id;
   }
 
-  function ShowContactInfo( personId,
+  function ShowContactInfo( iconId,
+                            personId,
                             parentControlName,
                             contactsDelimStr )
   {
+    var icon = document.getElementById( iconId );
     var panel = document.getElementById( "ContactPanel" );
     var parent = document.getElementById( parentControlName );
     var parentRect = parent.getBoundingClientRect();
@@ -20,6 +25,8 @@
         panel.attributes[ "personId" ] == personId )
     {
       panel.style.display = 'none';
+      icon.src = 'resources/dropdown.png';
+      previousDropdownIconId = null;
       return;
     }
 
@@ -49,6 +56,15 @@
     }
 
     panel.attributes[ "personId" ] = personId;
+
+    icon.src = "resources/dropup.png";
+
+    if( previousDropdownIconId != null )
+    {
+      document.getElementById( previousDropdownIconId ).src = "resources/dropdown.png";
+    }
+
+    previousDropdownIconId = iconId;
   }
 </script>
 
