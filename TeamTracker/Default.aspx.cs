@@ -372,7 +372,8 @@ public partial class _Default : System.Web.UI.Page
     contactsImage.Attributes.Add(
       "onclick",
       string.Format(
-        "ShowContactInfo( '{0}', '{1}' )",
+        "ShowContactInfo( {0}, '{1}', '{2}' )",
+        person.Id,
         contactsImage.ID,
         string.Join( ";", contacts ) ) );
 
