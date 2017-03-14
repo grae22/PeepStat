@@ -15,7 +15,6 @@
           Runat="server"
           SelectCommand="SELECT * FROM Setting"
           UpdateCommand="UPDATE Setting SET [key]=@key, value=@value WHERE id=@id"
-          DeleteCommand="DELETE FROM Setting WHERE id=@id"
           DataSourceMode="DataSet">
         </asp:SqlDataSource>
         <asp:GridView
@@ -41,8 +40,6 @@
               DataField="value" />
           </Columns>
         </asp:GridView>
-        <asp:Button ID="DummyToPreventAddingNewSettingByMistake" runat="server" Text="" Style="display: none;" />
-        <asp:Button ID="NewSetting" runat="server" Text="New" />
       </div>
     </form>
   </body>
