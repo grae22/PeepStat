@@ -1,21 +1,24 @@
 ﻿using System;
 using Quartz;
 
-public class DailyResetStatusTask : IJob
+namespace TeamTracker
 {
-  //---------------------------------------------------------------------------
-
-  public void Execute( IJobExecutionContext context )
+  class DailyResetStatusTask : IJob
   {
-    try
-    {
-      Database.ExecSql( "TRUNCATE TABLE PeopleStatus" );
-    }
-    catch( Exception )
-    {
-      // Ignore it.
-    }
-  }
+    //-------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
+    public void Execute( IJobExecutionContext context )
+    {
+      try
+      {
+        Database.ExecSql( "TRUNCATE TABLE PeopleStatus" );
+      }
+      catch( Exception )
+      {
+        // Ignore it.
+      }
+    }
+
+    //-------------------------------------------------------------------------
+  }
 }

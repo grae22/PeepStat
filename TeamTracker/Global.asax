@@ -4,7 +4,7 @@
 
   void Application_Start( object sender, EventArgs e )
   {
-    JobScheduler.Start();
+    TeamTracker.TaskScheduler.Start();
   }
 
   void Application_End( object sender, EventArgs e )
