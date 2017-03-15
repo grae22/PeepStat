@@ -16,7 +16,8 @@ public partial class _Default : System.Web.UI.Page
   const string IMAGE_PATH_WAND = IMAGE_PATH + "wand.png";
   const string IMAGE_PATH_DROPDOWN = IMAGE_PATH + "dropdown.png";
 
-  Dictionary<string, Status> StatusTypes;
+  Dictionary<string, Status> StatusTypes = new Dictionary<string, Status>();
+  Dictionary<string, string> Settings = new Dictionary<string, string>();
   int EditPersonId = -1;
 
   //---------------------------------------------------------------------------
@@ -27,9 +28,11 @@ public partial class _Default : System.Web.UI.Page
 
     int.TryParse( Request.QueryString[ "EditPersonId" ], out EditPersonId );
 
-    GetPageHeaderFromDb();
+    GetSettingsFromDb();
     GetStatusTypesFromDb();
     GetPeopleFromDb( out people );
+
+    PageHeader.Text = Settings[ "PageHeader" ];
 
     BuildUiTable( StatusTable,
                   people,
@@ -38,34 +41,40 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void GetPageHeaderFromDb()
+  void GetSettingsFromDb()
   {
+    Settings.Clear();
+
     using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
     {
       connection.Open();
 
       SqlDataReader reader =
         new SqlCommand(
-          "SELECT Value FROM Setting WHERE [Key]='PageHeader'",
+          "SELECT [Key], Value FROM Setting",
           connection ).ExecuteReader();
 
       using( reader )
       {
-        reader.Read();
-
-        if( reader.IsDBNull( 0 ) == false )
+        while( reader.Read() )
         {
-          PageHeader.Text = reader.GetString( 0 );
+          Settings.Add(
+            reader.GetString( 0 ),
+            reader.GetString( 1 ) );
         }
       }
     }
+
+    // Apply some default settings if any are missing.
+    if( !Settings.ContainsKey( "PageHeader" ) ) Settings.Add( "PageHeader", "### Missing Setting ###" );
+    if( !Settings.ContainsKey( "DefaultContactType" ) ) Settings.Add( "DefaultContactType", "SIP" );
   }
 
   //---------------------------------------------------------------------------
 
   void GetStatusTypesFromDb()
   {
-    StatusTypes = new Dictionary<string, Status>();
+    StatusTypes.Clear();
 
     using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
     {
@@ -229,7 +238,6 @@ public partial class _Default : System.Web.UI.Page
 
       AddContactLinkCellToRow(
         person,
-        person.Contact,
         row,
         1,
         HorizontalAlign.Left );
@@ -316,7 +324,6 @@ public partial class _Default : System.Web.UI.Page
   //---------------------------------------------------------------------------
 
   void AddContactLinkCellToRow( Person person,
-                                string text,
                                 TableRow row,
                                 int column,
                                 HorizontalAlign align = HorizontalAlign.Center )
@@ -329,13 +336,8 @@ public partial class _Default : System.Web.UI.Page
       row.Cells.Add( cell );
     }
 
-    var link = new HyperLink();
-    link.NavigateUrl = string.Format( "<a href='sip:{0}'>{0}</a>", text );
-    link.Text = link.NavigateUrl;
-    
-    row.Cells[ column ].Controls.Add( link );
-
     List<string> contacts = new List<string>();
+    string text = "";
 
     using( SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
     {
@@ -344,10 +346,38 @@ public partial class _Default : System.Web.UI.Page
       SqlDataReader reader =
         new SqlCommand(
           string.Format(
+            "SELECT contactAddress " +
+              "FROM PeopleContactView " +
+              "WHERE peopleId={0} AND contactName='{1}'",
+            person.Id,
+            Settings[ "DefaultContactType" ] ),
+          connection ).ExecuteReader();
+
+      using( reader )
+      {
+        reader.Read();
+
+        if( reader.HasRows )
+        {
+          text = reader.GetString( 0 );
+        }
+      }
+
+      var link = new HyperLink();
+      link.NavigateUrl = string.Format( "<a href='sip:{0}'>{0}</a>", text );
+      link.Text = link.NavigateUrl;
+    
+      row.Cells[ column ].Controls.Add( link );
+
+      // Drop-down contacts.
+      reader =
+        new SqlCommand(
+          string.Format(
             "SELECT contactName, contactAddress, hyperlinkPrefix " +
               "FROM PeopleContactView " +
-              "WHERE peopleId={0} and contactName!='SIP'",
-            person.Id ),
+              "WHERE peopleId={0} and contactName!='{1}'",
+            person.Id,
+            Settings[ "DefaultContactType" ] ),
           connection ).ExecuteReader();
 
       using( reader )
