@@ -227,6 +227,7 @@ public partial class _Default : System.Web.UI.Page
         HorizontalAlign.Left );
 
       AddContactLinkCellToRow(
+        person,
         person.Contact,
         row,
         1,
@@ -313,10 +314,11 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void AddContactLinkCellToRow( string text,
-                            TableRow row,
-                            int column,
-                            HorizontalAlign align = HorizontalAlign.Center )
+  void AddContactLinkCellToRow( Person person,
+                                string text,
+                                TableRow row,
+                                int column,
+                                HorizontalAlign align = HorizontalAlign.Center )
   {
     while( column > row.Cells.Count - 1 )
     {
@@ -331,6 +333,52 @@ public partial class _Default : System.Web.UI.Page
     link.Text = link.NavigateUrl;
     
     row.Cells[ column ].Controls.Add( link );
+
+    List<string> contacts = new List<string>();
+
+    using( SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
+    {
+      connection.Open();
+
+      SqlDataReader reader =
+        new SqlCommand(
+          string.Format(
+            "SELECT contactName, contactAddress, hyperlinkPrefix " +
+              "FROM PeopleContactView " +
+              "WHERE peopleId={0}",
+            person.Id ),
+          connection ).ExecuteReader();
+
+      using( reader )
+      {
+        while( reader.Read() )
+        {
+          contacts.Add( reader.GetString( 0 ) );
+          contacts.Add( reader.GetString( 1 ) );
+          contacts.Add( reader.GetString( 2 ) );
+        }
+      }
+    }
+
+    var contactsImage = new Image();
+    contactsImage.ID = "contact_" + text;
+    contactsImage.ImageUrl = IMAGE_PATH + "dropdown.png";
+    contactsImage.Width = 16;
+    contactsImage.Height = 16;
+    contactsImage.AlternateText = "...";
+    contactsImage.ImageAlign = ImageAlign.AbsMiddle;
+    contactsImage.Style.Add( "padding-left", "2px" );
+    contactsImage.Style.Add( "cursor", "pointer" );
+    contactsImage.Attributes.Add(
+      "onclick",
+      string.Format(
+        "ShowContactInfo( '{0}', {1}, '{2}', '{3}' )",
+        contactsImage.ID,
+        person.Id,
+        contactsImage.ID,
+        string.Join( ";", contacts ) ) );
+
+    row.Cells[ column ].Controls.Add( contactsImage );
   }
   
   //---------------------------------------------------------------------------
