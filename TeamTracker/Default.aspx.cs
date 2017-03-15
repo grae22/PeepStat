@@ -14,6 +14,7 @@ public partial class _Default : System.Web.UI.Page
   const string IMAGE_PATH_NO = IMAGE_PATH + "no.png";
   const string IMAGE_PATH_YES = IMAGE_PATH + "yes.png";
   const string IMAGE_PATH_WAND = IMAGE_PATH + "wand.png";
+  const string IMAGE_PATH_DROPDOWN = IMAGE_PATH + "dropdown.png";
 
   Dictionary<string, Status> StatusTypes;
   int EditPersonId = -1;
@@ -345,7 +346,7 @@ public partial class _Default : System.Web.UI.Page
           string.Format(
             "SELECT contactName, contactAddress, hyperlinkPrefix " +
               "FROM PeopleContactView " +
-              "WHERE peopleId={0}",
+              "WHERE peopleId={0} and contactName!='SIP'",
             person.Id ),
           connection ).ExecuteReader();
 
@@ -362,7 +363,7 @@ public partial class _Default : System.Web.UI.Page
 
     var contactsImage = new Image();
     contactsImage.ID = "contact_" + text;
-    contactsImage.ImageUrl = IMAGE_PATH + "dropdown.png";
+    contactsImage.ImageUrl = IMAGE_PATH_DROPDOWN;
     contactsImage.Width = 16;
     contactsImage.Height = 16;
     contactsImage.AlternateText = "...";
@@ -431,8 +432,8 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
   void AddSelectAllOrNoneToRow( int peopleId,
-                          TableRow row,
-                          int column )
+                                TableRow row,
+                                int column )
   {
     while( column > row.Cells.Count - 1 )
     {
