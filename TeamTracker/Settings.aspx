@@ -32,7 +32,7 @@
               ShowDeleteButton="false" />
             <asp:BoundField
               HeaderText="Key"
-              ReadOnly="false"
+              ReadOnly="true"
               DataField="key" />
             <asp:BoundField
               HeaderText="Value"
