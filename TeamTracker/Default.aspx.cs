@@ -348,7 +348,7 @@ public partial class _Default : System.Web.UI.Page
           string.Format(
             "SELECT contactAddress " +
               "FROM PeopleContactView " +
-              "WHERE peopleId={0} AND contactName='{1}'",
+              "WHERE peopleId={0} AND contactTypeName='{1}'",
             person.Id,
             Settings[ "DefaultContactType" ] ),
           connection ).ExecuteReader();
@@ -373,9 +373,9 @@ public partial class _Default : System.Web.UI.Page
       reader =
         new SqlCommand(
           string.Format(
-            "SELECT contactName, contactAddress, hyperlinkPrefix " +
+            "SELECT contactTypeName, contactAddress, hyperlinkPrefix " +
               "FROM PeopleContactView " +
-              "WHERE peopleId={0} and contactName!='{1}'",
+              "WHERE peopleId={0} AND contactTypeName!='{1}'",
             person.Id,
             Settings[ "DefaultContactType" ] ),
           connection ).ExecuteReader();
