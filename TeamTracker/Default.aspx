@@ -3,68 +3,9 @@
 <!DOCTYPE html>
 
 <script lang="text/javascript">
-
-  var previousDropdownIconId = null;
-
   function EditUserWithId( id )
   {
     window.location = "Default.aspx?EditPersonId=" + id;
-  }
-
-  function ShowContactInfo( iconId,
-                            personId,
-                            parentControlName,
-                            contactsDelimStr )
-  {
-    var icon = document.getElementById( iconId );
-    var panel = document.getElementById( "ContactPanel" );
-    var parent = document.getElementById( parentControlName );
-    var parentRect = parent.getBoundingClientRect();
-
-    if( panel.style.display == 'block' &&
-        panel.attributes[ "personId" ] == personId )
-    {
-      panel.style.display = 'none';
-      icon.src = 'resources/dropdown.png';
-      previousDropdownIconId = null;
-      return;
-    }
-
-    panel.style.display = 'block';
-    panel.style.left = parentRect.right + 'px';
-    panel.style.top = parentRect.top + 'px';
-
-    var contacts = contactsDelimStr.split( ';' );
-
-    while( panel.childNodes.length > 0 )
-    {
-      if( panel.lastChild.className != "w3-closebtn" )
-      {
-        panel.removeChild( panel.lastChild );
-      }
-    }
-
-    for( i = 0; i < contacts.length - 2; i += 3 )
-    {
-      var link = document.createElement( 'a' );
-      link.text = contacts[ i ] + " (" + contacts[ i + 1 ] + ')';
-      link.href = contacts[ i + 2 ] + ':' + contacts[ i + 1 ];
-      link.style.color = 'white';
-
-      panel.appendChild( link );
-      panel.appendChild( document.createElement( "br" ) );
-    }
-
-    panel.attributes[ "personId" ] = personId;
-
-    icon.src = "resources/dropup.png";
-
-    if( previousDropdownIconId != null )
-    {
-      document.getElementById( previousDropdownIconId ).src = "resources/dropdown.png";
-    }
-
-    previousDropdownIconId = iconId;
   }
 </script>
 
@@ -82,21 +23,6 @@
     <form id="Body" runat="server">
       <asp:Table ID="StatusTable" runat="server" CellPadding="5" />
     </form>
-    <div
-      id="ContactPanel"
-      class="w3-panel"
-      style="
-        border:black;
-        border-style:solid;
-        border-width:1px;
-        background-color:#00aaff;
-        position:absolute;
-        opacity:0.9;
-        visibility:visible;
-        display:none;
-        width:250px;
-        height:75px">
-    </div>
     <font face="Arial" size="1" color="black">
     TeamTracker v1.0 © GB & JM 2017
     </font>
