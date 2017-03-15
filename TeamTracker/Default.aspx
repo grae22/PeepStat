@@ -19,6 +19,7 @@
     var icon = document.getElementById( iconId );
     var panel = document.getElementById( "ContactPanel" );
     var parent = document.getElementById( parentControlName );
+    //var parent = document.getElementById( iconId );
     var parentRect = parent.getBoundingClientRect();
 
     if( panel.style.display == 'block' &&
@@ -33,6 +34,8 @@
     panel.style.display = 'block';
     panel.style.left = parentRect.right + 'px';
     panel.style.top = parentRect.top + 'px';
+    //panel.style.left = ( parentRect.right - panel.clientWidth - 2 ) + 'px';
+    //panel.style.top = parentRect.bottom + 'px';
 
     var contacts = contactsDelimStr.split( ';' );
 
@@ -47,9 +50,9 @@
     for( i = 0; i < contacts.length - 2; i += 3 )
     {
       var link = document.createElement( 'a' );
-      link.text = contacts[ i ] + " (" + contacts[ i + 1 ] + ')';
+      link.text = contacts[ i ];// + " (" + contacts[ i + 1 ] + ')';
       link.href = contacts[ i + 2 ] + ':' + contacts[ i + 1 ];
-      link.style.color = 'white';
+      //link.style.color = "black";
 
       panel.appendChild( link );
       panel.appendChild( document.createElement( "br" ) );
@@ -89,13 +92,17 @@
         border:black;
         border-style:solid;
         border-width:1px;
-        background-color:#00aaff;
+        border-color:#87d7ff;
+        background-color:#ffffff;
+        color:#fe5d00;
+        font-family:Arial;
         position:absolute;
-        opacity:0.9;
+        opacity:0.8;
         visibility:visible;
         display:none;
-        width:250px;
-        height:75px">
+        width:50px;
+        height:40px;
+        padding: 4px;">
     </div>
     <font face="Arial" size="1" color="black">
     TeamTracker v1.0 © GB & JM 2017
