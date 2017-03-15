@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Data.SqlClient;
 
-public class Database
+namespace TeamTracker
 {
-  //---------------------------------------------------------------------------
+  public class Database
+  {
+    //-------------------------------------------------------------------------
 
-  public const string DB_SERVER_NAME = @"graemeb-pc\sqlexpress";
-  public const string DB_NAME = "TeamTracker";
-  public const string DB_USERNAME = "TeamTrackerUser";
-  public const string DB_PASSWORD = "TeamTrackerUser";
+    public const string DB_SERVER_NAME = @"graemeb-pc\sqlexpress";
+    public const string DB_NAME = "TeamTracker";
+    public const string DB_USERNAME = "TeamTrackerUser";
+    public const string DB_PASSWORD = "TeamTrackerUser";
 
   public static readonly string DB_CONNECTION_STRING =
     Environment.GetEnvironmentVariable( "SQLAZURECONNSTR_defaultConnection" );  
@@ -19,17 +21,27 @@ public class Database
     //  DB_USERNAME,
     //  DB_PASSWORD );
 
-  //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
-  public static int ExecSql( string command )
-  {
-    using( SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING ) )
+    public static int ExecSql( string command )
     {
-      connection.Open();
+      using( SqlConnection connection = new SqlConnection( DB_CONNECTION_STRING ) )
+      {
+        connection.Open();
 
-      return new SqlCommand( command, connection ).ExecuteNonQuery();
+        return new SqlCommand( command, connection ).ExecuteNonQuery();
+      }
     }
-  }
 
-  //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static SqlConnection OpenConnection()
+    {
+      var connection = new SqlConnection( DB_CONNECTION_STRING );
+      connection.Open();
+      return connection;
+    }
+
+    //-------------------------------------------------------------------------
+  }
 }

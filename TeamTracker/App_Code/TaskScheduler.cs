@@ -1,28 +1,31 @@
 ﻿using Quartz;
 using Quartz.Impl;
 
-public class JobScheduler
+namespace TeamTracker
 {
-  //---------------------------------------------------------------------------
-
-  public static void Start()
+  public class TaskScheduler
   {
-    IScheduler scheduler = StdSchedulerFactory.GetDefaultScheduler();
-    scheduler.Start();
+    //-------------------------------------------------------------------------
 
-    IJobDetail job = JobBuilder.Create<DailyResetStatusTask>().Build();
+    public static void Start()
+    {
+      IScheduler scheduler = StdSchedulerFactory.GetDefaultScheduler();
+      scheduler.Start();
 
-    ITrigger trigger = TriggerBuilder.Create()
-      .WithDailyTimeIntervalSchedule
-        ( s =>
-            s.WithIntervalInHours( 24 )
-             .OnEveryDay()
-             .StartingDailyAt( TimeOfDay.HourAndMinuteOfDay( 0, 0 ) )
-        )
-      .Build();
+      IJobDetail job = JobBuilder.Create<DailyResetStatusTask>().Build();
 
-    scheduler.ScheduleJob( job, trigger );
+      ITrigger trigger = TriggerBuilder.Create()
+        .WithDailyTimeIntervalSchedule
+          ( s =>
+              s.WithIntervalInHours( 24 )
+               .OnEveryDay()
+               .StartingDailyAt( TimeOfDay.HourAndMinuteOfDay( 0, 0 ) )
+          )
+        .Build();
+
+      scheduler.ScheduleJob( job, trigger );
+    }
+
+    //-------------------------------------------------------------------------
   }
-
-  //---------------------------------------------------------------------------
 }
