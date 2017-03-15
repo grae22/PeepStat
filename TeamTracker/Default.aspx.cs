@@ -33,6 +33,8 @@ public partial class _Default : System.Web.UI.Page
     StatusTypes = Status.Load();
     People = Person.Load( StatusTypes );
 
+    PageHeader.Text = Settings[ "PageHeader" ];
+
     BuildUiTable( StatusTable, People, StatusTypes );
   }
 
