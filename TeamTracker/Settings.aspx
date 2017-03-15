@@ -14,7 +14,7 @@
           ID="dataSource"
           Runat="server"
           SelectCommand="SELECT * FROM Setting"
-          UpdateCommand="UPDATE Setting SET [key]=@key, value=@value WHERE id=@id"
+          UpdateCommand="UPDATE Setting SET value=@value WHERE id=@id"
           DataSourceMode="DataSet">
         </asp:SqlDataSource>
         <asp:GridView
