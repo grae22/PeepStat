@@ -14,9 +14,9 @@ public partial class SettingsLogin : System.Web.UI.Page
 
   protected void Page_Load( object sender, EventArgs e )
   {
-    if( Database.ExecSql( "SELECT id FROM Settings WHERE [Key]='SettingsPassword'" ) == 0 )
+    if( Database.ExecSql( "SELECT id FROM Setting WHERE [Key]='SettingsPassword'" ) == 0 )
     {
-      Database.ExecSql( "INSERT INTO Settings ( [Key], Value ) VALUES ( 'SettingsPassword', 'admin' )" );
+      Database.ExecSql( "INSERT INTO Setting ( [Key], Value ) VALUES ( 'SettingsPassword', 'admin' )" );
     }
   }
 
