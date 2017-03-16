@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using System.IO;
+using TeamTracker;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -14,155 +15,65 @@ public partial class _Default : System.Web.UI.Page
   const string IMAGE_PATH_NO = IMAGE_PATH + "no.png";
   const string IMAGE_PATH_YES = IMAGE_PATH + "yes.png";
   const string IMAGE_PATH_WAND = IMAGE_PATH + "wand.png";
+  const string IMAGE_PATH_DROPDOWN = IMAGE_PATH + "dropdown.png";
 
-  Dictionary<string, Status> StatusTypes;
+  Dictionary<string, string> Settings = new Dictionary<string, string>();
+  Dictionary<int, Status> StatusTypes;
+  Dictionary<int, Person> People;
   int EditPersonId = -1;
 
   //---------------------------------------------------------------------------
  
   protected void Page_Load( object sender, EventArgs e )
   {
-    Dictionary<string, Person> people = new Dictionary<string, Person>();
-
     int.TryParse( Request.QueryString[ "EditPersonId" ], out EditPersonId );
 
-    GetPageHeaderFromDb();
-    GetStatusTypesFromDb();
-    GetPeopleFromDb( out people );
+    GetSettingsFromDb();
 
-    BuildUiTable( StatusTable,
-                  people,
-                  StatusTypes );
+    StatusTypes = Status.Load();
+    People = Person.Load( StatusTypes );
+
+    PageHeader.Text = Settings[ "PageHeader" ];
+
+    BuildUiTable( StatusTable, People, StatusTypes );
   }
 
   //---------------------------------------------------------------------------
 
-  void GetPageHeaderFromDb()
+  void GetSettingsFromDb()
   {
+    Settings.Clear();
+
     using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
     {
       connection.Open();
 
       SqlDataReader reader =
         new SqlCommand(
-          "SELECT Value FROM Setting WHERE [Key]='PageHeader'",
-          connection ).ExecuteReader();
-
-      using( reader )
-      {
-        reader.Read();
-
-        if( reader.IsDBNull( 0 ) == false )
-        {
-          PageHeader.Text = reader.GetString( 0 );
-        }
-      }
-    }
-  }
-
-  //---------------------------------------------------------------------------
-
-  void GetStatusTypesFromDb()
-  {
-    StatusTypes = new Dictionary<string, Status>();
-
-    using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
-    {
-      connection.Open();
-
-      var reader =
-        new SqlCommand(
-          "SELECT * FROM StatusTypes",
+          "SELECT [Key], Value FROM Setting",
           connection ).ExecuteReader();
 
       using( reader )
       {
         while( reader.Read() )
         {
-          Status status = new Status
-          {
-            Id = reader.GetInt32( 0 ),
-            Name = reader.GetString( 1 ),
-            SortOrder = reader.GetInt32( 2 )
-          };
-
-          StatusTypes.Add( status.Name, status );
+          Settings.Add(
+            reader.GetString( 0 ),
+            reader.GetString( 1 ) );
         }
       }
     }
-  }
 
-  //---------------------------------------------------------------------------
-
-  void GetPeopleFromDb( out Dictionary<string, Person> people )
-  {
-    // Load people & status types from the db.
-    people = new Dictionary<string, Person>();
-
-    using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
-    {
-      connection.Open();
-
-      var reader =
-        new SqlCommand(
-          "SELECT * FROM PeopleStatusView ORDER BY PersonName",
-          connection ).ExecuteReader();
-
-      using( reader )
-      {
-        while( reader.Read() )
-        {
-          // Read the values from the view.
-          string name = null;
-          string contact = null;
-          string statusType = null;
-          int personId = -1;
-          int statusTypeId = -1;
-
-          if( reader.IsDBNull( 0 ) == false ) name = reader.GetString( 0 );
-          if( reader.IsDBNull( 1 ) == false ) statusType = reader.GetString( 1 );
-          if( reader.IsDBNull( 2 ) == false ) personId = reader.GetInt32( 2 );
-          if( reader.IsDBNull( 3 ) == false ) statusTypeId = reader.GetInt32( 3 );
-          if( reader.IsDBNull( 4 ) == false ) contact = reader.GetString( 4 );
-
-          // Add the person to our collection.
-          if( name != null &&
-              people.ContainsKey( name ) == false )
-          {
-            people.Add( name, new Person() );
-          }
-
-          // Retrieve the person from our collection.
-          Person person = null;
-
-          if( name != null )
-          {
-            person = people[ name ];
-
-            person.Id = personId;
-            person.Name = name;
-            person.Contact = ( contact == null ? "" : contact );
-          }
-
-          // Add the status to both the current person (if one) and our collection
-          // of statue types.
-          if( statusType != null )
-          {
-            if( person != null )
-            {
-              person.Status.Add( StatusTypes[ statusType ] );
-            }
-          }
-        }
-      }
-    }
+    // Apply some default settings if any are missing.
+    if( !Settings.ContainsKey( "PageHeader" ) ) Settings.Add( "PageHeader", "### Missing Setting ###" );
+    if( !Settings.ContainsKey( "DefaultContactType" ) ) Settings.Add( "DefaultContactType", "SIP" );
   }
 
   //---------------------------------------------------------------------------
   
   Table BuildUiTable( Table table,
-                      Dictionary<string, Person> people,
-                      Dictionary<string, Status> statusTypes )
+                      Dictionary<int, Person> people,
+                      Dictionary<int, Status> statusTypes )
   {
     table.Rows.Clear();
 
@@ -217,26 +128,35 @@ public partial class _Default : System.Web.UI.Page
         HorizontalAlign.Left );
 
       AddContactLinkCellToRow(
-        person.Contact,
+        person,
         row,
         1,
         HorizontalAlign.Left );
 
       foreach( Status status in statusTypes.Values )
       {
+        string tooltip = "";
+
+        if( person.Contacts.ContainsKey( status ) )
+        {
+          tooltip = person.Contacts[ status ].Address;
+        }
+
         if( canEditThisPerson )
         {
           AddStatusToRow(
-            person.Id,
-            status.Id,
-            person.Status.Contains( status ),
+            person,
+            status,
+            tooltip,
+            person.Statuses.Contains( status ),
             row,
             statusToColumnIndex[ status ] );
         }
         else
         {
           AddImageToRow(
-            person.Status.Contains( status ) ? IMAGE_PATH_YES : IMAGE_PATH_NO,
+            person.Statuses.Contains( status ) ? IMAGE_PATH_YES : IMAGE_PATH_NO,
+            tooltip,
             row,
             statusToColumnIndex[ status ] );
         }
@@ -281,9 +201,9 @@ public partial class _Default : System.Web.UI.Page
   //---------------------------------------------------------------------------
 
   void AddPersonToRow( Person person,
-                       TableRow row,
-                       int column,
-                       HorizontalAlign align = HorizontalAlign.Center )
+                        TableRow row,
+                        int column,
+                        HorizontalAlign align = HorizontalAlign.Center )
   {
     while( column > row.Cells.Count - 1 )
     {
@@ -303,10 +223,10 @@ public partial class _Default : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  void AddContactLinkCellToRow( string text,
-                            TableRow row,
-                            int column,
-                            HorizontalAlign align = HorizontalAlign.Center )
+  void AddContactLinkCellToRow( Person person,
+                                TableRow row,
+                                int column,
+                                HorizontalAlign align = HorizontalAlign.Center )
   {
     while( column > row.Cells.Count - 1 )
     {
@@ -316,17 +236,86 @@ public partial class _Default : System.Web.UI.Page
       row.Cells.Add( cell );
     }
 
-    var link = new HyperLink();
-    link.NavigateUrl = string.Format( "<a href='sip:{0}'>{0}</a>", text );
-    link.Text = link.NavigateUrl;
-    
-    row.Cells[ column ].Controls.Add( link );
+    List<string> contacts = new List<string>();
+    string text = "";
+
+    using( SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
+    {
+      connection.Open();
+
+      SqlDataReader reader =
+        new SqlCommand(
+          string.Format(
+            "SELECT contactAddress " +
+              "FROM PeopleContactView " +
+              "WHERE peopleId={0} AND contactTypeName='{1}'",
+            person.Id,
+            Settings[ "DefaultContactType" ] ),
+          connection ).ExecuteReader();
+
+      using( reader )
+      {
+        reader.Read();
+
+        if( reader.HasRows )
+        {
+          text = reader.GetString( 0 );
+        }
+      }
+
+      var link = new HyperLink();
+      link.NavigateUrl = string.Format( "<a href='sip:{0}'>{0}</a>", text );
+      link.Text = link.NavigateUrl;
+
+      row.Cells[ column ].Controls.Add( link );
+
+      // Drop-down contacts. 
+      reader =
+        new SqlCommand(
+          string.Format(
+            "SELECT contactTypeName, contactAddress, hyperlinkPrefix " +
+              "FROM PeopleContactView " +
+              "WHERE peopleId={0} AND contactTypeName!='{1}'",
+            person.Id,
+            Settings[ "DefaultContactType" ] ),
+          connection ).ExecuteReader();
+
+      using( reader )
+      {
+        while( reader.Read() )
+        {
+          contacts.Add( reader.GetString( 0 ) );
+          contacts.Add( reader.GetString( 1 ) );
+          contacts.Add( reader.GetString( 2 ) );
+        }
+      }
+    }
+
+    var contactsImage = new Image();
+    contactsImage.ID = "contact_" + text;
+    contactsImage.ImageUrl = IMAGE_PATH_DROPDOWN;
+    contactsImage.Width = 16;
+    contactsImage.Height = 16;
+    contactsImage.ImageAlign = ImageAlign.AbsMiddle;
+    contactsImage.Style.Add( "padding-left", "2px" );
+    contactsImage.Style.Add( "cursor", "pointer" );
+    contactsImage.Attributes.Add(
+      "onclick",
+      string.Format( 
+        "ShowContactInfo( '{0}', {1}, '{2}', '{3}' )", 
+        contactsImage.ID, 
+        person.Id, 
+        contactsImage.ID, 
+        string.Join( ";", contacts ) ) ); 
+ 
+    row.Cells[ column ].Controls.Add( contactsImage ); 
   }
   
   //---------------------------------------------------------------------------
 
-  void AddStatusToRow( int peopleId,
-                       int statusId,
+  void AddStatusToRow( Person person,
+                       Status status,
+                       string tooltip,
                        bool statusActive,
                        TableRow row,
                        int column,
@@ -341,8 +330,9 @@ public partial class _Default : System.Web.UI.Page
     cell.HorizontalAlign = align;
 
     var button = new ImageButton();
-    button.ID = string.Format( "{0}~{1}", peopleId, statusId );
+    button.ID = string.Format( "{0}~{1}", person.Id, status.Id );
     button.ImageUrl = statusActive ? IMAGE_PATH_YES : IMAGE_PATH_NO;
+    button.ToolTip = tooltip;
     button.Attributes.Add( "status", statusActive ? "active" : "" );
     button.Style.Add( "cursor", "pointer" );
     button.Click += HandleStatusClick;
@@ -353,6 +343,7 @@ public partial class _Default : System.Web.UI.Page
   //---------------------------------------------------------------------------
   
   void AddImageToRow( string imagePath,
+                      string tooltip,
                       TableRow row,
                       int column,
                       HorizontalAlign align = HorizontalAlign.Center )
@@ -367,14 +358,15 @@ public partial class _Default : System.Web.UI.Page
 
     var image = new Image();
     image.ImageUrl = imagePath;
+    image.ToolTip = tooltip;
 
     cell.Controls.Add( image );
   }
 
   //---------------------------------------------------------------------------
   void AddSelectAllOrNoneToRow( int peopleId,
-                          TableRow row,
-                          int column )
+                                TableRow row,
+                                int column )
   {
     while( column > row.Cells.Count - 1 )
     {
@@ -476,7 +468,7 @@ public partial class _Default : System.Web.UI.Page
     Response.Redirect( Request.RawUrl );
   }
 
-  //---------------------------------------------------------------------------  
+  //---------------------------------------------------------------------------
 
   protected void SetEditPersonId( int id )
   {
