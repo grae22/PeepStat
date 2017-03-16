@@ -24,6 +24,11 @@ public partial class SettingsLogin : System.Web.UI.Page
 
   protected void OnLoginClick( object sender, EventArgs e )
   {
+    if( Database.ExecSql( "SELECT id FROM Setting WHERE [Key]='SettingsPassword'" ) == 0 )
+    {
+      Database.ExecSql( "INSERT INTO Setting ( [Key], Value ) VALUES ( 'SettingsPassword', 'admin' )" );
+    }
+
     string password = Request.Form[ "password" ];
 
     if( ValidatePassword( password ) )
