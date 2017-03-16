@@ -33,10 +33,13 @@ public partial class SettingsLogin : System.Web.UI.Page
 
   bool ValidatePassword( string password )
   {
-    using( SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
+    if( Database.ExecScalar( "SELECT id FROM Setting WHERE [Key]='SettingsPassword'" ) == null )
     {
-      connection.Open();
+      Database.ExecSql( "INSERT INTO Setting ( [Key], Value ) VALUES ( 'SettingsPassword', 'admin' )" );
+    }
 
+    using( SqlConnection connection = Database.OpenConnection() )
+    {
       int rowCount =
         (int)
         new SqlCommand(
