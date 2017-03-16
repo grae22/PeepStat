@@ -50,6 +50,8 @@ namespace TeamTracker
       ImportSettings( sanitisedLines );
       ImportStatusTypes( sanitisedLines );
       ImportPeople( sanitisedLines );
+
+      Log( "Finished." );
     }
 
     //-------------------------------------------------------------------------
