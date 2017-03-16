@@ -25,7 +25,10 @@ public partial class _Default : System.Web.UI.Page
  
   protected void Page_Load( object sender, EventArgs e )
   {
-    int.TryParse( Request.QueryString[ "EditPersonId" ], out EditPersonId );
+    if( Request.QueryString[ "EditPersonId" ] != null )
+    {
+      int.TryParse( Request.QueryString[ "EditPersonId" ], out EditPersonId );
+    }
 
     GetSettingsFromDb();
 
