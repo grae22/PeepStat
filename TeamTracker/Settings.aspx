@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
     <title>Settings</title>
+    <link href="TeamTracker.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <a href="Default.aspx">Back</a>

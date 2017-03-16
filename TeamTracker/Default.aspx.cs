@@ -203,16 +203,6 @@ public partial class _Default : System.Web.UI.Page
         AddCellToHeaderRow( header, status.Name ) );
     }
 
-    // Add settings link.
-    var settingsImage = new Image();
-    settingsImage.ImageUrl = IMAGE_PATH_SETTINGS;
-    settingsImage.Attributes.Add( "onclick", "window.location='SettingsLogin.aspx'" );
-    settingsImage.Style.Add( "cursor", "pointer" );
-
-    header.Cells.Add( new TableCell() );
-    TableCell settingsCell = header.Cells[ header.Cells.Count - 1 ];
-    settingsCell.Controls.Add( settingsImage );
-    
     // Add each person and their statuses as a row.
     foreach( Person person in people.Values )
     {
