@@ -1,3 +1,15 @@
-﻿body {
-  font-family:Arial;
+﻿body
+{
+  font-family: Arial;
+}
+
+.pageHeader
+{
+  font-size: 18pt;
+  font-weight: bold;
+}
+
+.pageFooter
+{
+  font-size: 8pt;
 }

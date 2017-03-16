@@ -17,24 +17,27 @@
     <link rel="icon" href="resources/team.png" />
   </head>
   <body>
-    <div style="display:inline-block;">
+    <div style="display:block;">
       <img src="resources/Logo.png" style="width: 24px; height: 24px;" />
-      <font face="Arial" size="5" color="black">
-        <b><asp:Label ID="PageHeader" runat="server" /></b>
-      </font>
+      <asp:Label
+        ID="PageHeader"
+        runat="server"
+        class="pageHeader" />
+    </div>
+    <div style="display:inline-block;">
       <form id="Body" runat="server">
         <asp:Table ID="StatusTable" runat="server" CellPadding="5" />
       </form>
-      <table style="width:100%;font-size:8pt;">
-        <tr>
-          <td>
-            TeamTracker v1.0 © GB & JM 2017
-          </td>
-          <td style="text-align:right;">
-            <a href="SettingsLogin.aspx" style="color:#5caeb4;">Settings</a>
-          </td>
-        </tr>
-      </table>
+      <div class="pageFooter">
+        <table style="width:100%;">
+          <tr>
+            <td>TeamTracker v1.0 © GB & JM 2017</td>
+            <td style="text-align:right;">
+              <a href="SettingsLogin.aspx" style="color:#5caeb4;">Settings</a>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
   </body>
 </html>
