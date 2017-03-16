@@ -1,0 +1,48 @@
+#------------------------------------------------------------------------------
+
+Version=1.0
+
+#------------------------------------------------------------------------------
+# NOTE:
+# By default all data is erased from the DB when importing, uncomment the
+# 'append' keyword in each section to append data instead.
+#------------------------------------------------------------------------------
+
+:Settings
+#append
+key,value
+PageHeader,Team availability matrix
+SettingsPassword,admin
+
+#------------------------------------------------------------------------------
+# WARNING:
+# Deleting the data in this section (i.e. not appending) will cause the People
+# data to be deleted, too.
+
+:StatusTypes
+#append
+name,sortOrder,hyperlinkPrefix
+Presence,0,
+Phone,1,sip
+Email,2,mailto
+Skype,3,tel
+
+#------------------------------------------------------------------------------
+
+:People
+#append
+name,statusName,address
+Dude,Presence,
+Dude,Phone,123
+Dude,Email,dude@gmail.com
+Dude,Skype,dude.skypename
+Another Dude,Presence,
+Another Dude,Phone,456
+Another Dude,Email,another.dude@gmail.com
+Another Dude,Skype,another.dude
+Bob,Presence,
+Bob,Phone,789
+Bob,Email,bob@gmail.com
+Bob,Skype,bob.skypename
+
+#------------------------------------------------------------------------------

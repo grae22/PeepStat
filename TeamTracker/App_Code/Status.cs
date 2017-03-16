@@ -1,24 +1,91 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 
-public class Status : IComparable
+namespace TeamTracker
 {
-  //---------------------------------------------------------------------------
-
-  public int Id { get; set; }
-  public string Name { get; set; }
-  public int SortOrder { get; set; }
-
-  //---------------------------------------------------------------------------
-
-  public int CompareTo( object ob )
+  public class Status : IComparable
   {
-    if( ob is Status )
+    //-------------------------------------------------------------------------
+
+    public static Dictionary<int, Status> Load()
     {
-      return SortOrder.CompareTo( ((Status)ob).SortOrder );
+      try
+      {
+        Dictionary<int, Status> statuses = new Dictionary<int, Status>();
+
+        using( SqlConnection connection = Database.OpenConnection() )
+        {
+          SqlDataReader reader =
+            new SqlCommand(
+              "SELECT id, name, sortOrder, hyperlinkPrefix " +
+              "FROM StatusTypes",
+              connection ).ExecuteReader();
+
+          using( reader )
+          {
+            while( reader.Read() )
+            {
+              statuses.Add(
+                reader.GetInt32( 0 ),
+                new Status(
+                  reader.GetInt32( 0 ),
+                  reader.GetString( 1 ),
+                  reader.GetInt32( 2 ),
+                  reader.GetString( 3 ) ) );
+            }
+          }          
+        }
+
+        return statuses;
+      }
+      catch( Exception )
+      {
+        return null;
+      }
     }
 
-    return 0;
-  }
+    //-------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
+    public static Status GetByName( string name,
+                                    IEnumerable<Status> types )
+    {
+      return types.First( x => x.Name == name );
+    }
+
+    //=========================================================================
+
+    public int Id { get; private set; }
+    public string Name { get; private set; }
+    public int SortOrder { get; private set; }
+    public string HyperlinkPrefix { get; private set; }
+
+    //-------------------------------------------------------------------------
+
+    public Status( int id,
+                   string name,
+                   int sortOrder,
+                   string hyperlinkPrefix )
+    {
+      Id = id;
+      Name = name;
+      SortOrder = sortOrder;
+      HyperlinkPrefix = hyperlinkPrefix;
+    }
+
+    //-------------------------------------------------------------------------
+
+    public int CompareTo( object ob )
+    {
+      if( ob is Status )
+      {
+        return SortOrder.CompareTo( ((Status)ob).SortOrder );
+      }
+
+      return 0;
+    }
+
+    //-------------------------------------------------------------------------
+  }
 }

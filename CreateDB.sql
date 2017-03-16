@@ -433,5 +433,6 @@ INSERT INTO [TeamTracker].[dbo].[Setting]
            ([key],[value])
      VALUES
            ('PageHeader','Team availability matrix'),
-           ('SettingsPassword','admin')
+           ('SettingsPassword','admin'),
+           ('DefaultContactType','SIP')
 GO
