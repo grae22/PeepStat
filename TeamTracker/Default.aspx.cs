@@ -10,7 +10,6 @@ public partial class _Default : System.Web.UI.Page
 
   const string IMAGE_PATH = "Resources/";
   const string IMAGE_EXT = ".png";
-  const string IMAGE_PATH_SETTINGS = IMAGE_PATH + "settings.png";
   const string IMAGE_PATH_NO = IMAGE_PATH + "no.png";
   const string IMAGE_PATH_YES = IMAGE_PATH + "yes.png";
   const string IMAGE_PATH_WAND = IMAGE_PATH + "wand.png";
