@@ -8,7 +8,7 @@
     <link href="TeamTracker.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <a href="Default.aspx">Back</a>
+    <p><a href="Default.aspx">Back</a></p>
     <form id="SettingsForm" runat="server">
       <div>
         <asp:SqlDataSource
@@ -43,5 +43,6 @@
         </asp:GridView>
       </div>
     </form>
+    <p><a href="FileImportExport.aspx">Import/Export</a></p>
   </body>
 </html>

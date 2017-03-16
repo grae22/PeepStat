@@ -1,11 +1,12 @@
 ﻿body
 {
-  font-family: Arial;
-}
+  font-family: Arial; 
+  font-size: 10pt;}
 
 .pageHeader
 {
-  font-size: 18pt;
+  font-family: Arial; 
+  font-size: 16pt;
   font-weight: bold;
 }
 

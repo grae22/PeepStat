@@ -11,7 +11,6 @@ public partial class _Default : System.Web.UI.Page
 
   const string IMAGE_PATH = "Resources/";
   const string IMAGE_EXT = ".png";
-  const string IMAGE_PATH_SETTINGS = IMAGE_PATH + "settings.png";
   const string IMAGE_PATH_NO = IMAGE_PATH + "no.png";
   const string IMAGE_PATH_YES = IMAGE_PATH + "yes.png";
   const string IMAGE_PATH_WAND = IMAGE_PATH + "wand.png";
@@ -66,7 +65,7 @@ public partial class _Default : System.Web.UI.Page
 
     // Apply some default settings if any are missing.
     if( !Settings.ContainsKey( "PageHeader" ) ) Settings.Add( "PageHeader", "### Missing Setting ###" );
-    if( !Settings.ContainsKey( "DefaultContactType" ) ) Settings.Add( "DefaultContactType", "SIP" );
+    if( !Settings.ContainsKey( "DefaultContactType" ) ) Settings.Add( "DefaultContactType", "Phone" );
   }
 
   //---------------------------------------------------------------------------
@@ -284,9 +283,15 @@ public partial class _Default : System.Web.UI.Page
       {
         while( reader.Read() )
         {
-          contacts.Add( reader.GetString( 0 ) );
-          contacts.Add( reader.GetString( 1 ) );
-          contacts.Add( reader.GetString( 2 ) );
+          string contactAddress = reader.GetString( 1 );
+          string hyperlinkPrefix = reader.GetString( 2 );
+
+          if( contactAddress.Length > 0 && hyperlinkPrefix.Length > 0 )
+          {
+            contacts.Add( reader.GetString( 0 ) );
+            contacts.Add( contactAddress );
+            contacts.Add( hyperlinkPrefix );
+          }
         }
       }
     }
