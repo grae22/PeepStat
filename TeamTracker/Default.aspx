@@ -18,7 +18,7 @@
   </head>
   <body>
     <div style="display:block;">
-      <img src="resources/Logo.png" style="width: 24px; height: 24px;" />
+      <img src="resources/Logo.png" style="width: 24px; height: 24px;" align="top"/>
       <asp:Label
         ID="PageHeader"
         runat="server"
