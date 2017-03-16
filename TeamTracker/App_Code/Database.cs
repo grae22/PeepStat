@@ -6,7 +6,7 @@ namespace TeamTracker
   {
     //-------------------------------------------------------------------------
 
-    public const string DB_SERVER_NAME = @"graemeb-pc\sqlexpress";
+    public const string DB_SERVER_NAME = "localhost";
     public const string DB_NAME = "TeamTracker";
     public const string DB_USERNAME = "TeamTrackerUser";
     public const string DB_PASSWORD = "TeamTrackerUser";
