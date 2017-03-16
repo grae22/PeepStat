@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
     <title>Login</title>
+    <link href="TeamTracker.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <form id="Login" runat="server">

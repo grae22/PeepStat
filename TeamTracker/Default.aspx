@@ -75,16 +75,30 @@
   <head runat="server">
     <meta http-equiv="Refresh" content="60;url=Default.aspx" />
     <title>TeamTracker</title>
+    <link href="TeamTracker.css" rel="stylesheet" type="text/css" />
     <link rel="icon" href="resources/team.png" />
   </head>
   <body>
-    <img src="resources/Logo.png" style="width: 24px; height: 24px;" />
-    <font face="Arial" size="5" color="black">
-      <b><asp:Label ID="PageHeader" runat="server" /></b>
-    </font>
-    <form id="Body" runat="server">
-      <asp:Table ID="StatusTable" runat="server" CellPadding="5" />
-    </form>
+    <div style="display:inline-block;">
+      <img src="resources/Logo.png" style="width: 24px; height: 24px;" />
+      <asp:Label
+        ID="PageHeader"
+        runat="server"
+        class="pageHeader" />
+      <form id="Body" runat="server">
+        <asp:Table ID="StatusTable" runat="server" CellPadding="5" />
+      </form>
+      <div class="pageFooter">
+        <table style="width:100%;">
+          <tr>
+            <td>TeamTracker v1.0 © GB & JM 2017</td>
+            <td style="text-align:right;">
+              <a href="SettingsLogin.aspx" style="color:#5caeb4;">Settings</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
     <div
       id="ContactPanel"
       class="w3-panel"
@@ -104,8 +118,5 @@
         height:40px;
         padding: 4px;">
     </div>
-    <font face="Arial" size="1" color="black">
-    TeamTracker v1.0 © GB & JM 2017
-    </font>
   </body>
 </html>
