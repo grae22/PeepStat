@@ -79,12 +79,14 @@
     <link rel="icon" href="resources/team.png" />
   </head>
   <body>
-    <div style="display:inline-block;">
+    <div style="display:block;">
       <img src="resources/Logo.png" style="width: 24px; height: 24px;" />
       <asp:Label
         ID="PageHeader"
         runat="server"
         class="pageHeader" />
+    </div>
+    <div style="display:inline-block;">
       <form id="Body" runat="server">
         <asp:Table ID="StatusTable" runat="server" CellPadding="5" />
       </form>
