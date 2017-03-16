@@ -88,7 +88,7 @@ namespace TeamTracker
 
     string GetVersion( List<string> lines )
     {
-      string version = lines.First( x => x.ToLower().Contains( "version=" ) );
+      string version = lines.FirstOrDefault( x => x.ToLower().Contains( "version=" ) );
 
       if( version == null )
       {
@@ -371,9 +371,16 @@ namespace TeamTracker
           Database.ExecSql( "DBCC CHECKIDENT ( '[People]', RESEED, 0 )" );
         }
 
+        // We need the status types.
+        Dictionary<int, Status> statusTypes = Status.Load();
+
         // Interate through data.
+        Dictionary<int, Person> people = new Dictionary<int, Person>();
+
+        int rowCount;
         int itemCount = 0;
         int importedPeopleCount = 0;
+        int importedContactCount = 0;
 
         for( lineIndex++; lineIndex < lines.Count; lineIndex++ )
         {
@@ -397,31 +404,100 @@ namespace TeamTracker
           }
 
           string personName = data[ 0 ];
+          string statusName = data[ 1 ];
+          string address = data[ 2 ];
+
+          // Person already in DB?
+          int personId = -1;
+
+          Person person = people.Values.FirstOrDefault( x => x.Name == personName );
+
+          if( person != null )
+          {
+            personId = person.Id;
+          }
 
           // Add person to People table.
-          int rowCount =
+          if( personId < 0 )
+          {
+            rowCount =
+              Database.ExecSql(
+                string.Format(
+                  "INSERT INTO People ( name ) " +
+                  "VALUES ( '{0}' )",
+                  personName ) );
+
+            if( rowCount == 0 )
+            {
+              Log(
+                string.Format(
+                  "Failed to add item {0} to the People table.",
+                  itemCount ) );
+            }
+            else
+            {
+              importedPeopleCount++;
+            }
+
+            // Reload the People.
+            people = Person.Load( statusTypes );
+
+            person = people.Values.FirstOrDefault( x => x.Name == personName );
+
+            if( person != null )
+            {
+              personId = person.Id;
+            }
+            else
+            {
+              Log(
+                string.Format(
+                  "Failed to find person '{0}' that was just added.",
+                  personName ) );
+
+              continue;
+            }
+          }
+
+          // Add person's contact.
+          Status status = statusTypes.Values.FirstOrDefault( x => x.Name == statusName );
+
+          if( status == null )
+          {
+            Log(
+              string.Format(
+                "Failed to find StatusType with name '{0}' for person '{1}'.",
+                statusName,
+                personName ) );
+
+            continue;
+          }
+
+          rowCount =
             Database.ExecSql(
               string.Format(
-                "INSERT INTO People ( name ) " +
-                "VALUES ( '{0}' )",
-                personName ) );
+                "INSERT INTO PeopleContact ( peopleId, statusTypeId, address )" +
+                  "VALUES ( {0}, {1}, '{2}' )",
+                personId,
+                status.Id,
+                address ) );
 
           if( rowCount == 0 )
           {
             Log(
               string.Format(
-                "Failed to add item {0} to the People table.",
-                itemCount ) );
+                "Failed to import contact '{0}' for person '{0}'.",
+                statusName,
+                personName ) );
           }
           else
           {
-            importedPeopleCount++;
+            importedContactCount++;
           }
-
-          // Add 
         }
 
         Log( string.Format( "Imported {0} people.", importedPeopleCount ) );
+        Log( string.Format( "Imported {0} contacts.", importedContactCount ) );
       }
       catch( Exception ex )
       {
