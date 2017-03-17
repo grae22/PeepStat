@@ -58,7 +58,7 @@ namespace TeamTracker
 
         Transaction.Commit();
 
-        Log( "Finished." );
+        output.Append( "Import complete." );
       }
       catch( Exception ex )
       {

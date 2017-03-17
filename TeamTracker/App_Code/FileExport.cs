@@ -19,6 +19,8 @@ namespace TeamTracker
         new FileExport( output, content );
 
         File.WriteAllText( filename, content.ToString() );
+
+        output.Append( "Export complete." );
       }
       catch( Exception ex )
       {
