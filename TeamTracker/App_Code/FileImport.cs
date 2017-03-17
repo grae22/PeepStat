@@ -31,6 +31,7 @@ namespace TeamTracker
     //=========================================================================
 
     StringBuilder LogOutput;
+    DbTransaction Transaction;
 
     //-------------------------------------------------------------------------
 
@@ -47,11 +48,25 @@ namespace TeamTracker
         return;
       }
 
-      ImportSettings( sanitisedLines );
-      ImportStatusTypes( sanitisedLines );
-      ImportPeople( sanitisedLines );
+      try
+      {
+        Transaction = new DbTransaction( "Import" );
 
-      Log( "Finished." );
+        ImportSettings( sanitisedLines );
+        ImportStatusTypes( sanitisedLines );
+        ImportPeople( sanitisedLines );
+
+        Transaction.Commit();
+
+        Log( "Finished." );
+      }
+      catch( Exception ex )
+      {
+        Transaction.Rollback();
+
+        Log( "Error:" + ex.Message );
+        Log( "All changes rolled back." );
+      }
     }
 
     //-------------------------------------------------------------------------
@@ -95,7 +110,7 @@ namespace TeamTracker
       if( version == null )
       {
         Log( "Version not found." );
-        return null;
+        return "0";
       }
 
       return version.Remove( 0, "version=".Length );
@@ -122,8 +137,7 @@ namespace TeamTracker
 
         if( lineIndex == lines.Count )
         {
-          Log( "No Settings section not found." );
-          return;
+          throw new Exception( "No Settings section not found." );
         }
 
         // Append data?
@@ -142,14 +156,13 @@ namespace TeamTracker
         if( lineIndex > lines.Count - 1 ||
             lines[ lineIndex ].ToLower() != ( "key,value" )  )
         {
-          Log( "Expected Settings column headers: 'key,value'." );
-          return;
+          throw new Exception( "Expected Settings column headers: 'key,value'." );
         }
 
         // Delete current data?
         if( appendData == false )
         {
-          Database.ExecSql( "TRUNCATE TABLE Setting" );
+          Transaction.ExecNonQuery( "TRUNCATE TABLE Setting" );
         }
 
         // Interate through data.
@@ -169,16 +182,14 @@ namespace TeamTracker
 
           if( data.Length != 2 )
           {
-            Log(
+            throw new Exception(
               string.Format(
                 "Item {0} appears to be missing one or more fields, skipping.",
                 itemCount ) );
-
-            continue;
           }
 
           int rowCount =
-            Database.ExecSql(
+            Transaction.ExecNonQuery(
               string.Format(
                 "INSERT INTO Setting ( [Key], Value ) " +
                 "VALUES ( '{0}', '{1}' )",
@@ -187,7 +198,7 @@ namespace TeamTracker
 
           if( rowCount == 0 )
           {
-            Log(
+            throw new Exception(
               string.Format(
                 "Failed to add item {0} to the DB.",
                 itemCount ) );
@@ -202,7 +213,7 @@ namespace TeamTracker
       }
       catch( Exception ex )
       {
-        Log( "Error while importing Settings: " + ex.Message );
+        throw new Exception( "Error while importing Settings: " + ex.Message );
       }
     }
 
@@ -227,8 +238,7 @@ namespace TeamTracker
 
         if( lineIndex == lines.Count )
         {
-          Log( "No StatusTypes section not found." );
-          return;
+          throw new Exception( "No StatusTypes section not found." );
         }
 
         // Append data?
@@ -247,20 +257,20 @@ namespace TeamTracker
         if( lineIndex > lines.Count - 1 ||
             lines[ lineIndex ].ToLower() != ( "name,sortorder,hyperlinkprefix" )  )
         {
-          Log( "Expected StatusTypes column headers: 'name,sortOrder,hyperlinkPrefix'." );
-          return;
+          throw new Exception(
+            "Expected StatusTypes column headers: 'name,sortOrder,hyperlinkPrefix'." );
         }
 
         // Delete current data?
         if( appendData == false )
         {
-          Database.ExecSql( "TRUNCATE TABLE PeopleStatus" );
-          Database.ExecSql( "TRUNCATE TABLE PeopleContact" );
-          Database.ExecSql( "DELETE FROM People" );
-          Database.ExecSql( "DELETE FROM StatusTypes" );
+          Transaction.ExecNonQuery( "TRUNCATE TABLE PeopleStatus" );
+          Transaction.ExecNonQuery( "TRUNCATE TABLE PeopleContact" );
+          Transaction.ExecNonQuery( "DELETE FROM People" );
+          Transaction.ExecNonQuery( "DELETE FROM StatusTypes" );
 
-          Database.ExecSql( "DBCC CHECKIDENT ( '[People]', RESEED, 0 )" );
-          Database.ExecSql( "DBCC CHECKIDENT ( '[StatusTypes]', RESEED, 0 )" );
+          Transaction.ExecNonQuery( "DBCC CHECKIDENT ( '[People]', RESEED, 0 )" );
+          Transaction.ExecNonQuery( "DBCC CHECKIDENT ( '[StatusTypes]', RESEED, 0 )" );
         }
 
         // Interate through data.
@@ -280,16 +290,14 @@ namespace TeamTracker
 
           if( data.Length != 3 )
           {
-            Log(
+            throw new Exception(
               string.Format(
                 "Item {0} appears to be missing one or more fields, skipping.",
                 itemCount ) );
-
-            continue;
           }
 
           int rowCount =
-            Database.ExecSql(
+            Transaction.ExecNonQuery(
               string.Format(
                 "INSERT INTO StatusTypes ( name, sortOrder, hyperlinkPrefix ) " +
                 "VALUES ( '{0}', '{1}', '{2}' )",
@@ -299,7 +307,7 @@ namespace TeamTracker
 
           if( rowCount == 0 )
           {
-            Log(
+            throw new Exception(
               string.Format(
                 "Failed to add item {0} to the DB.",
                 itemCount ) );
@@ -314,7 +322,7 @@ namespace TeamTracker
       }
       catch( Exception ex )
       {
-        Log( "Error while importing StatusTypes: " + ex.Message );
+        throw new Exception( "Error while importing StatusTypes: " + ex.Message );
       }
     }
 
@@ -339,8 +347,7 @@ namespace TeamTracker
 
         if( lineIndex == lines.Count )
         {
-          Log( "No People section not found." );
-          return;
+          throw new Exception( "No People section not found." );
         }
 
         // Append data?
@@ -359,22 +366,22 @@ namespace TeamTracker
         if( lineIndex > lines.Count - 1 ||
             lines[ lineIndex ].ToLower() != ( "name,statusname,address" )  )
         {
-          Log( "Expected StatusTypes column headers: 'name,statusName,address'." );
-          return;
+          throw new Exception(
+            "Expected StatusTypes column headers: 'name,statusName,address'." );
         }
 
         // Delete current data?
         if( appendData == false )
         {
-          Database.ExecSql( "TRUNCATE TABLE PeopleStatus" );
-          Database.ExecSql( "TRUNCATE TABLE PeopleContact" );
-          Database.ExecSql( "DELETE FROM People" );
+          Transaction.ExecNonQuery( "TRUNCATE TABLE PeopleStatus" );
+          Transaction.ExecNonQuery( "TRUNCATE TABLE PeopleContact" );
+          Transaction.ExecNonQuery( "DELETE FROM People" );
 
-          Database.ExecSql( "DBCC CHECKIDENT ( '[People]', RESEED, 0 )" );
+          Transaction.ExecNonQuery( "DBCC CHECKIDENT ( '[People]', RESEED, 0 )" );
         }
 
         // We need the status types.
-        Dictionary<int, Status> statusTypes = Status.Load();
+        Dictionary<int, Status> statusTypes = Status.Load( Transaction.Connection );
 
         // Interate through data.
         Dictionary<int, Person> people = new Dictionary<int, Person>();
@@ -397,12 +404,10 @@ namespace TeamTracker
 
           if( data.Length != 3 )
           {
-            Log(
+            throw new Exception(
               string.Format(
                 "Item {0} appears to be missing one or more fields, skipping.",
                 itemCount ) );
-
-            continue;
           }
 
           string personName = data[ 0 ];
@@ -423,7 +428,7 @@ namespace TeamTracker
           if( personId < 0 )
           {
             rowCount =
-              Database.ExecSql(
+              Transaction.ExecNonQuery(
                 string.Format(
                   "INSERT INTO People ( name ) " +
                   "VALUES ( '{0}' )",
@@ -431,7 +436,7 @@ namespace TeamTracker
 
             if( rowCount == 0 )
             {
-              Log(
+              throw new Exception(
                 string.Format(
                   "Failed to add item {0} to the People table.",
                   itemCount ) );
@@ -442,7 +447,7 @@ namespace TeamTracker
             }
 
             // Reload the People.
-            people = Person.Load( statusTypes );
+            people = Person.Load( Transaction.Connection, statusTypes );
 
             person = people.Values.FirstOrDefault( x => x.Name == personName );
 
@@ -452,12 +457,10 @@ namespace TeamTracker
             }
             else
             {
-              Log(
+              throw new Exception(
                 string.Format(
                   "Failed to find person '{0}' that was just added.",
                   personName ) );
-
-              continue;
             }
           }
 
@@ -466,17 +469,15 @@ namespace TeamTracker
 
           if( status == null )
           {
-            Log(
+            throw new Exception(
               string.Format(
                 "Failed to find StatusType with name '{0}' for person '{1}'.",
                 statusName,
                 personName ) );
-
-            continue;
           }
 
           rowCount =
-            Database.ExecSql(
+            Transaction.ExecNonQuery(
               string.Format(
                 "INSERT INTO PeopleContact ( peopleId, statusTypeId, address )" +
                   "VALUES ( {0}, {1}, '{2}' )",
@@ -486,7 +487,7 @@ namespace TeamTracker
 
           if( rowCount == 0 )
           {
-            Log(
+            throw new Exception(
               string.Format(
                 "Failed to import contact '{0}' for person '{0}'.",
                 statusName,
@@ -503,7 +504,7 @@ namespace TeamTracker
       }
       catch( Exception ex )
       {
-        Log( "Error while importing People: " + ex.Message );
+        throw new Exception( "Error while importing People: " + ex.Message );
       }
     }
 

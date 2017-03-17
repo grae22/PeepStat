@@ -8,73 +8,72 @@ namespace TeamTracker
   {
     //-------------------------------------------------------------------------
 
-    public static Dictionary<int, Person> Load( Dictionary<int, Status> statusTypes )
+    public static Dictionary<int, Person> Load(
+      SqlConnection connection,
+      Dictionary<int, Status> statusTypes )
     {
       try
       {
         Dictionary<int, Person> people = new Dictionary<int, Person>();
 
-        using( SqlConnection connection = Database.OpenConnection() )
+        // Load people.
+        SqlDataReader reader =
+          new SqlCommand(
+            "SELECT id, name " +
+            "FROM People",
+            connection ).ExecuteReader();
+
+        using( reader )
         {
-          // Load people.
-          SqlDataReader reader =
-            new SqlCommand(
-              "SELECT id, name " +
-              "FROM People",
-              connection ).ExecuteReader();
-
-          using( reader )
+          while( reader.Read() )
           {
-            while( reader.Read() )
-            {
-              people.Add(
+            people.Add(
+              reader.GetInt32( 0 ),
+              new Person(
                 reader.GetInt32( 0 ),
-                new Person(
-                  reader.GetInt32( 0 ),
-                  reader.GetString( 1 ) ) );
-            }
+                reader.GetString( 1 ) ) );
           }
+        }
 
-          // Load each person's contacts.
-          reader =
-            new SqlCommand(
-              "SELECT peopleId, statusTypeId, address " +
-              "FROM PeopleContact",
-              connection ).ExecuteReader();
+        // Load each person's contacts.
+        reader =
+          new SqlCommand(
+            "SELECT peopleId, statusTypeId, address " +
+            "FROM PeopleContact",
+            connection ).ExecuteReader();
 
-          using( reader )
+        using( reader )
+        {
+          while( reader.Read() )
           {
-            while( reader.Read() )
-            {
-              int personId = reader.GetInt32( 0 );
-              int statusTypeId = reader.GetInt32( 1 );
-              string address = reader.GetString( 2 );
+            int personId = reader.GetInt32( 0 );
+            int statusTypeId = reader.GetInt32( 1 );
+            string address = reader.GetString( 2 );
 
-              people[ personId ].Contacts.Add(
+            people[ personId ].Contacts.Add(
+              statusTypes[ statusTypeId ],
+              new Contact(
                 statusTypes[ statusTypeId ],
-                new Contact(
-                  statusTypes[ statusTypeId ],
-                  address ) );
-            }
+                address ) );
           }
+        }
 
-          // Load each person's statuses.
-          reader =
-            new SqlCommand(
-              "SELECT peopleId, statusTypeId " +
-              "FROM PeopleStatus",
-              connection ).ExecuteReader();
+        // Load each person's statuses.
+        reader =
+          new SqlCommand(
+            "SELECT peopleId, statusTypeId " +
+            "FROM PeopleStatus",
+            connection ).ExecuteReader();
 
-          using( reader )
+        using( reader )
+        {
+          while( reader.Read() )
           {
-            while( reader.Read() )
-            {
-              int personId = reader.GetInt32( 0 );
-              int statusTypeId = reader.GetInt32( 1 );
+            int personId = reader.GetInt32( 0 );
+            int statusTypeId = reader.GetInt32( 1 );
 
-              people[ personId ].Statuses.Add(
-                statusTypes[ statusTypeId ] );
-            }
+            people[ personId ].Statuses.Add(
+              statusTypes[ statusTypeId ] );
           }
         }
 
