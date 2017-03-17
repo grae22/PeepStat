@@ -11,15 +11,30 @@
     <p><a href="Settings.aspx">Back to Settings</a></p>
     <form id="ImportExportForm" runat="server">
       <div>
-        <asp:FileUpload ID="FileUploader" runat="server" />
-        <asp:Button
-          ID="Import"
-          runat="server"
-          Text="Upload & Import"
-          OnClick="PerformImport" />
-        <br />
-        <br />
-        <asp:Label ID="Result" runat="server" />
+        <p>
+          <span>
+            Export:
+            <asp:Button
+              ID="Export"
+              runat="server"
+              Text="Export"
+              OnClick="PerformExport" />
+          </span>
+        </p>
+        <p>
+          <span>
+            Import:
+            <asp:FileUpload ID="FileUploader" runat="server" />
+            <asp:Button
+              ID="Import"
+              runat="server"
+              Text="Upload & Import"
+              OnClick="PerformImport" />
+          </span>
+        </p>
+        <p>
+          <asp:Label ID="Result" runat="server" />
+        </p>
       </div>
     </form>
   </body>

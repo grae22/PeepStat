@@ -32,8 +32,11 @@ public partial class _Default : System.Web.UI.Page
 
     GetSettingsFromDb();
 
-    StatusTypes = Status.Load();
-    People = Person.Load( StatusTypes );
+    using( SqlConnection connection = Database.OpenConnection() )
+    {
+      StatusTypes = Status.Load( connection );
+      People = Person.Load( connection, StatusTypes );
+    }
 
     PageHeader.Text = Settings[ "PageHeader" ];
 
