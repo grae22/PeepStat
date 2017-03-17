@@ -55,6 +55,7 @@ public partial class FileImportExport : System.Web.UI.Page
         Response.Flush();
         Response.TransmitFile( info.FullName );
         Response.Flush();
+        Response.SuppressContent = true;
 
         try
         {
