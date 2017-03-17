@@ -15,6 +15,8 @@ public partial class _Default : System.Web.UI.Page
   const string IMAGE_PATH_YES = IMAGE_PATH + "yes.png";
   const string IMAGE_PATH_WAND = IMAGE_PATH + "wand.png";
   const string IMAGE_PATH_DROPDOWN = IMAGE_PATH + "dropdown.png";
+  const string IMAGE_PATH_PERSON = IMAGE_PATH + "person.png";
+  const string IMAGE_PATH_CONTACT = IMAGE_PATH + "contact.png";
 
   Dictionary<string, string> Settings = new Dictionary<string, string>();
   Dictionary<int, Status> StatusTypes;
@@ -100,14 +102,18 @@ public partial class _Default : System.Web.UI.Page
     table.Rows.Add( header );
 
     // Header cell for 'Team member'.
+    var personImage = new Image();
+    personImage.ImageUrl = IMAGE_PATH_PERSON;
+
     header.Cells.Add( new TableCell() );
-    header.Cells[ 0 ].Text = "Team member";
-    header.Cells[ 0 ].Font.Bold = true;
+    header.Cells[ 0 ].Controls.Add( personImage );
 
     // Header cell for 'Contact'.
+    var contactImage = new Image();
+    contactImage.ImageUrl = IMAGE_PATH_CONTACT;
+
     header.Cells.Add( new TableCell() );
-    header.Cells[ 1 ].Text = "Contact";
-    header.Cells[ 1 ].Font.Bold = true;
+    header.Cells[ 1 ].Controls.Add( contactImage );
 
     // Add each status type to the header.
     Dictionary<Status, int> statusToColumnIndex = new Dictionary<Status, int>();
