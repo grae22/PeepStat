@@ -28,4 +28,20 @@ public partial class FileImportExport : System.Web.UI.Page
   }
 
   //---------------------------------------------------------------------------
+  protected void PerformExport( object sender, EventArgs e )
+  {
+    string filename = HttpRuntime.CodegenDir + "/ToExport";
+
+    //FileUploader.SaveAs( filename );
+    
+    //Result.Text =
+    //  string.Format(
+    //    "{0} ({1} bytes)<br /><br />",
+    //    FileUploader.PostedFile.FileName,
+    //    FileUploader.PostedFile.ContentLength );
+
+    Result.Text += FileExport.Export( filename );
+  }
+
+  //---------------------------------------------------------------------------
 }

@@ -11,6 +11,11 @@
     <p><a href="Settings.aspx">Back to Settings</a></p>
     <form id="ImportExportForm" runat="server">
       <div>
+        <asp:Button
+          ID="Export"
+          runat="server"
+          Text="Export"
+          OnClick="PerformExport" />
         <asp:FileUpload ID="FileUploader" runat="server" />
         <asp:Button
           ID="Import"

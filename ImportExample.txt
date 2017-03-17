@@ -15,6 +15,7 @@ PageHeader,Team availability matrix
 SettingsPassword,admin
 
 #------------------------------------------------------------------------------
+
 # WARNING:
 # Deleting the data in this section (i.e. not appending) will cause the People
 # data to be deleted, too.
