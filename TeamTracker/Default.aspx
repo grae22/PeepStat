@@ -63,6 +63,7 @@
       panel.innerHTML += ' ';
       panel.appendChild( link );
       panel.appendChild( document.createElement( "br" ) );
+      panel.style.lineHeight = 1.35;
     }
 
     panel.attributes[ "personId" ] = personId;
@@ -124,7 +125,7 @@
         visibility:visible;
         display:none;
         width:65px;
-        height:35px;
+        height:38px;
         padding: 4px;">
     </div>
   </body>
