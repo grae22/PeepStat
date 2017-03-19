@@ -19,7 +19,6 @@
     var icon = document.getElementById( iconId );
     var panel = document.getElementById( "ContactPanel" );
     var parent = document.getElementById( parentControlName );
-    //var parent = document.getElementById( iconId );
     var parentRect = parent.getBoundingClientRect();
 
     if( panel.style.display == 'block' &&
@@ -34,8 +33,6 @@
     panel.style.display = 'block';
     panel.style.left = parentRect.right + 'px';
     panel.style.top = parentRect.top + 'px';
-    //panel.style.left = ( parentRect.right - panel.clientWidth - 2 ) + 'px';
-    //panel.style.top = parentRect.bottom + 'px';
 
     var contacts = contactsDelimStr.split( ';' );
 
@@ -49,11 +46,21 @@
 
     for( i = 0; i < contacts.length - 2; i += 3 )
     {
-      var link = document.createElement( 'a' );
-      link.text = contacts[ i ];// + " (" + contacts[ i + 1 ] + ')';
-      link.href = contacts[ i + 2 ] + ':' + contacts[ i + 1 ];
-      //link.style.color = "black";
+      var contactTypeName = contacts[ i ];
+      var contactAddress = contacts[ i + 1 ];
+      var hyperlinkPrefix = contacts[ i + 2 ];
 
+      var icon = document.createElement( "img" );
+      icon.src = "resources/" + contactTypeName + ".png";
+      icon.width = 16;
+      icon.style.verticalAlign = "middle";
+
+      var link = document.createElement( "a" );
+      link.text = contactTypeName;
+      link.href = hyperlinkPrefix + ':' + contactAddress;
+
+      panel.appendChild( icon );
+      panel.innerHTML += ' ';
       panel.appendChild( link );
       panel.appendChild( document.createElement( "br" ) );
     }
@@ -116,8 +123,8 @@
         opacity:0.8;
         visibility:visible;
         display:none;
-        width:50px;
-        height:40px;
+        width:65px;
+        height:35px;
         padding: 4px;">
     </div>
   </body>
