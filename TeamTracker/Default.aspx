@@ -50,16 +50,16 @@
       var contactAddress = contacts[ i + 1 ];
       var hyperlinkPrefix = contacts[ i + 2 ];
 
-      var icon = document.createElement( "img" );
-      icon.src = "resources/" + contactTypeName + ".png";
-      icon.width = 16;
-      icon.style.verticalAlign = "middle";
+      var subIcon = document.createElement( "img" );
+      subIcon.src = "resources/" + contactTypeName + ".png";
+      subIcon.width = 16;
+      subIcon.style.verticalAlign = "middle";
 
       var link = document.createElement( "a" );
       link.text = contactTypeName;
       link.href = hyperlinkPrefix + ':' + contactAddress;
 
-      panel.appendChild( icon );
+      panel.appendChild( subIcon );
       panel.innerHTML += ' ';
       panel.appendChild( link );
       panel.appendChild( document.createElement( "br" ) );
