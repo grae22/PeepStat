@@ -48,7 +48,8 @@ namespace TeamTracker
     public static Status GetByName( string name,
                                     IEnumerable<Status> types )
     {
-      return types.First( x => x.Name == name );
+      return types.FirstOrDefault(
+        x => x.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) );
     }
 
     //=========================================================================
