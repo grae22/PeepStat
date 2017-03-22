@@ -11,7 +11,7 @@ public partial class Settings : System.Web.UI.Page
     if( Session[ SettingsLogin.SES_SETTINGS_LOGGED_IN ] == null ||
         (bool)Session[ SettingsLogin.SES_SETTINGS_LOGGED_IN ] == false )
     {
-      Response.Redirect( "SettingsLogin.aspx" );
+      Response.Redirect( "Default.aspx" );
     }
 
     dataSource.ConnectionString = Database.DB_CONNECTION_STRING;

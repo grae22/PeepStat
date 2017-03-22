@@ -6,6 +6,7 @@
   <head runat="server">
     <title>Login</title>
     <link href="TeamTracker.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="resources/team.png" />
   </head>
   <body>
     <form id="Login" runat="server">
