@@ -6,8 +6,6 @@ GO
 
 /****** Object:  Database [TeamTracker]    Script Date: 2017/03/09 10:03:47 ******/
 CREATE DATABASE [TeamTracker]
-
-ALTER DATABASE [TeamTracker] SET COMPATIBILITY_LEVEL = 80
 GO
 
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
@@ -97,14 +95,12 @@ GO
 ALTER DATABASE [TeamTracker] SET  READ_WRITE 
 GO
 
+
+-- Create people table
+-----------------------------------------------------------------------------------------------------
 USE [TeamTracker]
 GO
-/****** Object:  User [TeamTrackerUser]    Script Date: 2017/03/16 4:08:21 PM ******/
-CREATE USER [TeamTrackerUser] FOR LOGIN [TeamTrackerUser] WITH DEFAULT_SCHEMA=[dbo]
-GO
-sys.sp_addrolemember @rolename = N'db_owner', @membername = N'TeamTrackerUser'
-GO
-/****** Object:  Table [dbo].[People]    Script Date: 2017/03/16 4:08:21 PM ******/
+/****** Object: Table [dbo].[People] Script Date: 2017/03/09 10:07:01 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -117,7 +113,12 @@ CREATE TABLE [dbo].[People](
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
 
+
+-- Create people contact table
+-----------------------------------------------------------------------------------------------------
+USE [TeamTracker]
 GO
 /****** Object:  Table [dbo].[PeopleContact]    Script Date: 2017/03/16 4:08:21 PM ******/
 SET ANSI_NULLS ON
@@ -129,7 +130,12 @@ CREATE TABLE [dbo].[PeopleContact](
 	[statusTypeId] [int] NOT NULL,
 	[address] [nvarchar](100) NOT NULL
 ) ON [PRIMARY]
+GO
 
+
+-- Create people status table
+-----------------------------------------------------------------------------------------------------
+USE [TeamTracker]
 GO
 /****** Object:  Table [dbo].[PeopleStatus]    Script Date: 2017/03/16 4:08:21 PM ******/
 SET ANSI_NULLS ON
@@ -140,7 +146,12 @@ CREATE TABLE [dbo].[PeopleStatus](
 	[peopleId] [int] NOT NULL,
 	[statusTypeId] [int] NOT NULL
 ) ON [PRIMARY]
+GO
 
+
+-- Create setting table
+-----------------------------------------------------------------------------------------------------
+USE [TeamTracker]
 GO
 /****** Object:  Table [dbo].[Setting]    Script Date: 2017/03/16 4:08:21 PM ******/
 SET ANSI_NULLS ON
@@ -160,7 +171,12 @@ CREATE TABLE [dbo].[Setting](
 	[key] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
 
+
+-- Create status types table
+-----------------------------------------------------------------------------------------------------
+USE [TeamTracker]
 GO
 /****** Object:  Table [dbo].[StatusTypes]    Script Date: 2017/03/16 4:08:21 PM ******/
 SET ANSI_NULLS ON
@@ -177,7 +193,12 @@ CREATE TABLE [dbo].[StatusTypes](
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
 
+
+-- Create export people view
+-----------------------------------------------------------------------------------------------------
+USE [TeamTracker]
 GO
 /****** Object:  View [dbo].[ExportPeopleView]    Script Date: 2017/03/16 4:08:21 PM ******/
 SET ANSI_NULLS ON
@@ -190,7 +211,12 @@ SELECT        dbo.People.name, dbo.StatusTypes.name AS statusName, dbo.PeopleCon
 FROM            dbo.People INNER JOIN
                          dbo.PeopleContact ON dbo.People.id = dbo.PeopleContact.peopleId INNER JOIN
                          dbo.StatusTypes ON dbo.PeopleContact.statusTypeId = dbo.StatusTypes.id
+GO
 
+
+-- Create people contact view
+-----------------------------------------------------------------------------------------------------
+USE [TeamTracker]
 GO
 /****** Object:  View [dbo].[PeopleContactView]    Script Date: 2017/03/16 4:08:21 PM ******/
 SET ANSI_NULLS ON
@@ -203,7 +229,12 @@ SELECT        dbo.People.id AS peopleId, dbo.StatusTypes.name AS contactTypeName
 FROM            dbo.People INNER JOIN
                          dbo.PeopleContact ON dbo.People.id = dbo.PeopleContact.peopleId INNER JOIN
                          dbo.StatusTypes ON dbo.PeopleContact.statusTypeId = dbo.StatusTypes.id
+GO
 
+
+-- Create people status view
+-----------------------------------------------------------------------------------------------------
+USE [TeamTracker]
 GO
 /****** Object:  View [dbo].[PeopleStatusView]    Script Date: 2017/03/16 4:08:21 PM ******/
 SET ANSI_NULLS ON
@@ -667,4 +698,22 @@ GO
 USE [master]
 GO
 ALTER DATABASE [TeamTracker] SET  READ_WRITE 
+GO
+
+-- Create TeamTracker login, user and set permissions, etc
+-----------------------------------------------------------------------------------------------------
+CREATE LOGIN [TeamTrackerUser] WITH PASSWORD=N'TeamTrackerUser', DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+GO
+/*
+-- Sysadmin role just in case, disabled by default
+EXEC sys.sp_addsrvrolemember @loginame = N'TeamTrackerUser', @rolename = N'sysadmin'
+GO
+*/
+USE [TeamTracker]
+GO
+CREATE USER [TeamTrackerUser] FOR LOGIN [TeamTrackerUser]
+GO
+USE [TeamTracker]
+GO
+EXEC sp_addrolemember N'db_owner', N'TeamTrackerUser'
 GO
