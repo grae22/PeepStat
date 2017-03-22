@@ -56,7 +56,7 @@
       subIcon.style.verticalAlign = "middle";
 
       var link = document.createElement( "a" );
-      link.text = contactTypeName;
+      link.innerHTML = contactTypeName;
       link.href = hyperlinkPrefix + ':' + contactAddress;
 
       panel.appendChild( subIcon );
