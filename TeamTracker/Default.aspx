@@ -49,6 +49,18 @@
       var contactTypeName = contacts[ i ];
       var contactAddress = contacts[ i + 1 ];
       var hyperlinkPrefix = contacts[ i + 2 ];
+      var hyperlinkPostfix = "";
+
+      if( hyperlinkPrefix == "skype-chat" )
+      {
+        hyperlinkPrefix = "skype";
+        hyperlinkPostfix = "?chat";
+      }
+      else if( hyperlinkPrefix == "skype-call" )
+      {
+        hyperlinkPrefix = "skype";
+        hyperlinkPostfix = "?call";
+      }
 
       var subIcon = document.createElement( "img" );
       subIcon.src = "resources/" + contactTypeName + ".png";
@@ -57,7 +69,7 @@
 
       var link = document.createElement( "a" );
       link.innerHTML = contactTypeName;
-      link.href = hyperlinkPrefix + ':' + contactAddress;
+      link.href = hyperlinkPrefix + ':' + contactAddress + hyperlinkPostfix;
 
       panel.appendChild( subIcon );
       panel.innerHTML += ' ';
