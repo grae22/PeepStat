@@ -247,85 +247,61 @@ public partial class _Default : System.Web.UI.Page
       row.Cells.Add( cell );
     }
 
-    List<string> contacts = new List<string>();
-    string text = "";
+    // Displayed link.
+    Status sipStatus = Status.GetByName( "phone", StatusTypes.Values );
 
-    using( SqlConnection connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
+    if( sipStatus != null &&
+        person.Contacts.ContainsKey( sipStatus ) )
     {
-      connection.Open();
-
-      SqlDataReader reader =
-        new SqlCommand(
-          string.Format(
-            "SELECT contactAddress " +
-              "FROM PeopleContactView " +
-              "WHERE peopleId={0} AND contactTypeName='{1}'",
-            person.Id,
-            Settings[ "DefaultContactType" ] ),
-          connection ).ExecuteReader();
-
-      using( reader )
-      {
-        reader.Read();
-
-        if( reader.HasRows )
-        {
-          text = reader.GetString( 0 );
-        }
-      }
-
       var link = new HyperLink();
-      link.NavigateUrl = string.Format( "<a href='sip:{0}'>{0}</a>", text );
+      link.NavigateUrl =
+        string.Format(
+          "<a href='{0}:{1}'>{1}</a>",
+          sipStatus.HyperlinkPrefix,
+          person.Contacts[ sipStatus ].Address );
       link.Text = link.NavigateUrl;
 
       row.Cells[ column ].Controls.Add( link );
-
-      // Drop-down contacts. 
-      reader =
-        new SqlCommand(
-          string.Format(
-            "SELECT contactTypeName, contactAddress, hyperlinkPrefix " +
-              "FROM PeopleContactView " +
-              "WHERE peopleId={0} AND contactTypeName!='{1}'",
-            person.Id,
-            Settings[ "DefaultContactType" ] ),
-          connection ).ExecuteReader();
-
-      using( reader )
-      {
-        while( reader.Read() )
-        {
-          string contactAddress = reader.GetString( 1 );
-          string hyperlinkPrefix = reader.GetString( 2 );
-
-          if( contactAddress.Length > 0 && hyperlinkPrefix.Length > 0 )
-          {
-            contacts.Add( reader.GetString( 0 ) );
-            contacts.Add( contactAddress );
-            contacts.Add( hyperlinkPrefix );
-          }
-        }
-      }
     }
 
-    var contactsImage = new Image();
-    contactsImage.ID = "contact_" + text;
-    contactsImage.ImageUrl = IMAGE_PATH_DROPDOWN;
-    contactsImage.Width = 16;
-    contactsImage.Height = 16;
-    contactsImage.ImageAlign = ImageAlign.AbsMiddle;
-    contactsImage.Style.Add( "padding-left", "2px" );
-    contactsImage.Style.Add( "cursor", "pointer" );
-    contactsImage.Attributes.Add(
-      "onclick",
-      string.Format( 
-        "ShowContactInfo( '{0}', {1}, '{2}', '{3}' )", 
-        contactsImage.ID, 
-        person.Id, 
-        contactsImage.ID, 
-        string.Join( ";", contacts ) ) ); 
+    // Links in dropdown.
+    List<string> dropdownContacts = new List<string>();
+
+    foreach( Contact contact in person.Contacts.Values )
+    {
+      if( contact.Type == sipStatus ||
+          contact.Address.Length == 0 )
+      {
+        continue;
+      }
+
+      dropdownContacts.Add( contact.Type.Name );
+      dropdownContacts.Add( contact.Address );
+      dropdownContacts.Add( contact.Type.HyperlinkPrefix );
+    }
+
+    // Contacts dropdown.
+    if( dropdownContacts.Count > 0 )
+    {
+      var contactsImage = new Image();
+      contactsImage.ID = "contact_" + person.Id;
+      contactsImage.ImageUrl = IMAGE_PATH_DROPDOWN;
+      contactsImage.Width = 16;
+      contactsImage.Height = 16;
+      contactsImage.ImageAlign = ImageAlign.AbsMiddle;
+      contactsImage.Style.Add( "padding-left", "2px" );
+      contactsImage.Style.Add( "cursor", "pointer" );
+      contactsImage.Attributes.Add(
+        "onclick",
+        string.Format( 
+          "ShowContactInfo( '{0}', {1}, '{2}', '{3}' )", 
+          contactsImage.ID, 
+          person.Id, 
+          contactsImage.ID, 
+          string.Join( ";", dropdownContacts ) ) ); 
  
-    row.Cells[ column ].Controls.Add( contactsImage ); 
+      row.Cells[ column ].Controls.Add( contactsImage );
+    }
   }
   
   //---------------------------------------------------------------------------
