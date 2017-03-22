@@ -62,7 +62,10 @@ namespace TeamTracker
       }
       catch( Exception ex )
       {
-        Transaction.Rollback();
+        if( Transaction != null )
+        {
+          Transaction.Rollback();
+        }
 
         Log( "Error:" + ex.Message );
         Log( "All changes rolled back." );
