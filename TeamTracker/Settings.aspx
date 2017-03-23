@@ -46,6 +46,9 @@
         </asp:GridView>
       </div>
     </form>
-    <p><a href="FileImportExport.aspx">Import/Export</a></p>
+    <p>
+      <a href="FileImportExport.aspx">Import/Export</a>
+      <a href="ViewLog.aspx">View Log</a>
+    </p>
   </body>
 </html>
