@@ -430,7 +430,7 @@ public partial class _Default : System.Web.UI.Page
     Database.ExecSql( command );
 
     // Refresh the page.
-    Response.Redirect( Request.RawUrl );
+    Server.Transfer( Request.RawUrl );
   }
 
   //---------------------------------------------------------------------------
@@ -472,7 +472,7 @@ public partial class _Default : System.Web.UI.Page
     }
 
     // Refresh the page.
-    Response.Redirect( Request.RawUrl );
+    Server.Transfer( Request.RawUrl );
   }
 
   //---------------------------------------------------------------------------

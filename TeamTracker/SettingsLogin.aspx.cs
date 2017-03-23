@@ -25,7 +25,7 @@ public partial class SettingsLogin : System.Web.UI.Page
     if( ValidatePassword( password ) )
     {
       Session[ SES_SETTINGS_LOGGED_IN ] = true;
-      Response.Redirect( "Settings.aspx" );
+      Server.Transfer( "Settings.aspx" );
     }
   }
 
