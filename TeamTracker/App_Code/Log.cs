@@ -57,11 +57,23 @@ namespace TeamTracker
       }
 
       string filePath = HttpContext.Current.Server.MapPath( "TeamTracker.log" );
+      string buffer = "";
+      bool fileExists = File.Exists( filePath );
 
-      StreamWriter writer = new StreamWriter( filePath, File.Exists( filePath ) );
-      writer.WriteLine( builder.ToString() );
-      writer.Flush();
-      writer.Close();
+      if( fileExists )
+      {
+        using( var reader = new StreamReader( filePath ) )
+        {
+          buffer = reader.ReadToEnd();
+        }
+      }
+
+      using( var writer = new StreamWriter( filePath ) )
+      {
+        writer.WriteLine( builder.ToString() );
+        writer.Write( buffer );
+        writer.Flush();
+      }
     }
 
     //---------------------------------------------------------------------------
