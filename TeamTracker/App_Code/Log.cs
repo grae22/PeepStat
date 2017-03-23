@@ -9,6 +9,10 @@ namespace TeamTracker
   {
     //---------------------------------------------------------------------------
 
+    public const string FILENAME = "TeamTracker.log";
+
+    //---------------------------------------------------------------------------
+
     public static void LogToFile( Exception ex )
     {
       if( ex == null )
@@ -56,7 +60,7 @@ namespace TeamTracker
         innerEx = innerEx.InnerException;
       }
 
-      string filePath = HttpContext.Current.Server.MapPath( "TeamTracker.log" );
+      string filePath = HttpContext.Current.Server.MapPath( FILENAME );
       string buffer = "";
       bool fileExists = File.Exists( filePath );
 
