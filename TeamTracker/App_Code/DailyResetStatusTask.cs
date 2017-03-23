@@ -13,9 +13,9 @@ namespace TeamTracker
       {
         Database.ExecSql( "TRUNCATE TABLE PeopleStatus" );
       }
-      catch( Exception )
+      catch( Exception ex )
       {
-        // Ignore it.
+        Log.LogToFile( ex );
       }
     }
 
