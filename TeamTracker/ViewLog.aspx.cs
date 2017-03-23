@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Web;
 using TeamTracker;
 
-public partial class Settings : System.Web.UI.Page
+public partial class ViewLog : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
@@ -14,7 +16,19 @@ public partial class Settings : System.Web.UI.Page
       Server.Transfer( "Default.aspx" );
     }
 
-    dataSource.ConnectionString = Database.DB_CONNECTION_STRING;
+    // Display log's content.
+    string filePath = HttpContext.Current.Server.MapPath( Log.FILENAME );
+    string buffer = "";
+
+    if( File.Exists( filePath ) )
+    {
+      using( var reader = new StreamReader( filePath ) )
+      {
+        buffer = reader.ReadToEnd();
+      }
+    }
+
+    LogContent.InnerHtml = buffer.Replace( Environment.NewLine, "<br />" );
   }
 
   //---------------------------------------------------------------------------
