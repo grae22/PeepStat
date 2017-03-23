@@ -6,8 +6,10 @@
   <head runat="server">
     <title>Login</title>
     <link href="TeamTracker.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="resources/team.png" />
   </head>
   <body>
+    <p><a href="Default.aspx">Back</a></p>
     <form id="Login" runat="server">
       <div>
         <input runat="server" id="password" type="password" autofocus="autofocus" />

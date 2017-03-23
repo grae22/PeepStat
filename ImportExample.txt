@@ -26,7 +26,7 @@ name,sortOrder,hyperlinkPrefix
 Presence,0,
 Phone,1,sip
 Email,2,mailto
-Skype,3,tel
+Skype,3,skype-chat
 
 #------------------------------------------------------------------------------
 
