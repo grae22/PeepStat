@@ -28,6 +28,11 @@ public partial class ViewLog : System.Web.UI.Page
       }
     }
 
+    if( buffer.Length == 0 )
+    {
+      buffer = "No entries found.";
+    }
+
     LogContent.InnerHtml = buffer.Replace( Environment.NewLine, "<br />" );
   }
 
