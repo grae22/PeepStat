@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using System.Web.UI.HtmlControls;
 using System.IO;
 using TeamTracker;
 
@@ -173,10 +174,11 @@ public partial class _Default : System.Web.UI.Page
         }
       }
 
-      if( canEditThisPerson )
-      {
-        AddSelectAllOrNoneToRow( person.Id, row, row.Cells.Count );
-      }
+      AddSelectAllOrNoneToRow(
+        person.Id, 
+        row,
+        row.Cells.Count,
+        !canEditThisPerson );
 
       table.Rows.Add( row );
     }
@@ -357,21 +359,33 @@ public partial class _Default : System.Web.UI.Page
   }
 
   //---------------------------------------------------------------------------
+
   void AddSelectAllOrNoneToRow( int peopleId,
                                 TableRow row,
-                                int column )
+                                int column,
+                                bool usePlaceholder )
   {
     while( column > row.Cells.Count - 1 )
     {
       var cell = new TableCell();
       row.Cells.Add( cell );
 
-      var button = new ImageButton();
-      button.ID = "allOrNone_" + peopleId.ToString();
-      button.ImageUrl = IMAGE_PATH_WAND;
-      button.Click += OnSelectAllOrNoneClick;
+      if( usePlaceholder == false )
+      {
+        var button = new ImageButton();
+        button.ID = "allOrNone_" + peopleId.ToString();
+        button.ImageUrl = IMAGE_PATH_WAND;
+        button.Click += OnSelectAllOrNoneClick;
 
-      cell.Controls.Add( button );
+        cell.Controls.Add( button );
+      }
+      else
+      {
+        var div = new HtmlGenericControl( "div" );
+        div.Attributes.Add( "class", "selectAllOrNonePlaceholder" );
+
+        cell.Controls.Add( div );
+      }
     }
   }
 
