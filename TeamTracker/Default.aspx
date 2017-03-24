@@ -93,7 +93,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
-    <meta http-equiv="Refresh" content="60;url=Default.aspx" />
+    <asp:PlaceHolder runat="server">
+      <meta http-equiv="Refresh" content="<%= StatusRefreshRate %>;url=Default.aspx" />
+    </asp:PlaceHolder>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TeamTracker</title>
     <link href="TeamTracker.css" rel="stylesheet" type="text/css" />
