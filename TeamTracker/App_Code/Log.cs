@@ -23,7 +23,7 @@ namespace TeamTracker
       StringBuilder builder = new StringBuilder();
 
       builder.Append( "*********************" + Environment.NewLine );
-      builder.Append( ' ' + DateTime.Now.ToString( "yyyy/MM/dd hh:mm:ss" ) );
+      builder.Append( ' ' + DateTime.Now.ToString( "yyyy/MM/dd HH:mm:ss" ) );
       builder.Append( Environment.NewLine + "*********************" + Environment.NewLine );
       builder.Append( "Type : " + ex.GetType().Name );
       builder.Append( Environment.NewLine );
