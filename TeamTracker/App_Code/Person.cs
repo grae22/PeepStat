@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 
 namespace TeamTracker
 {
-  public class Person
+  public class Person : IComparable<Person>
   {
     //-------------------------------------------------------------------------
 
@@ -94,6 +94,13 @@ namespace TeamTracker
       Name = name;
       Statuses = new List<Status>();
       Contacts = new Dictionary<Status, Contact>();
+    }
+
+    //-------------------------------------------------------------------------
+
+    public int CompareTo( Person other )
+    {
+      return Name.CompareTo( other.Name );
     }
 
     //-------------------------------------------------------------------------

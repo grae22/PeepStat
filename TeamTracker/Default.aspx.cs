@@ -86,14 +86,12 @@ public partial class _Default : System.Web.UI.Page
     table.Rows.Clear();
 
     // Build a dictonary of status-types sorted by sort-order.
-    List<Status> sortedStatusTypes = new List<Status>();
-
-    foreach( Status status in statusTypes.Values )
-    {
-      sortedStatusTypes.Add( status );
-    }
-
+    List<Status> sortedStatusTypes = new List<Status>( statusTypes.Values );
     sortedStatusTypes.Sort();
+
+    // Compile sorted list of people.
+    List<Person> sortedPeople = new List<Person>( people.Values );
+    sortedPeople.Sort();    
 
     // Table general.
     table.BorderWidth = 1;
@@ -127,7 +125,7 @@ public partial class _Default : System.Web.UI.Page
     }
 
     // Add each person and their statuses as a row.
-    foreach( Person person in people.Values )
+    foreach( Person person in sortedPeople )
     {
       bool canEditThisPerson = ( person.Id == EditPersonId );
 
