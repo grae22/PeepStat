@@ -10,6 +10,8 @@ public partial class _Default : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
+  protected string StatusRefreshRate { get; private set; }
+
   const string IMAGE_PATH = "Resources/";
   const string IMAGE_EXT = ".png";
   const string IMAGE_PATH_NO = IMAGE_PATH + "no.png";
@@ -75,6 +77,9 @@ public partial class _Default : System.Web.UI.Page
     // Apply some default settings if any are missing.
     if( !Settings.ContainsKey( "PageHeader" ) ) Settings.Add( "PageHeader", "### Missing Setting ###" );
     if( !Settings.ContainsKey( "DefaultContactType" ) ) Settings.Add( "DefaultContactType", "Phone" );
+    if( !Settings.ContainsKey( "StatusRefreshRate" ) ) Settings.Add( "StatusRefreshRate", "60" );
+
+    StatusRefreshRate = Settings[ "StatusRefreshRate" ];
   }
 
   //---------------------------------------------------------------------------
