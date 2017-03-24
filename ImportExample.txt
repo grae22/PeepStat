@@ -13,6 +13,7 @@ Version=1.0
 key,value
 PageHeader,Team availability matrix
 SettingsPassword,admin
+StatusRefreshRate,60
 
 #------------------------------------------------------------------------------
 
