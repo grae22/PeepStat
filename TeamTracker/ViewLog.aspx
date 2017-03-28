@@ -11,7 +11,10 @@
     <link rel="icon" href="resources/team.png" />
   </head>
   <body>
-    <p><a href="Settings.aspx">Back</a></p>
+    <p>
+      <a href="Settings.aspx">Back</a>
+      <a href="<% ClearLog(); %>">Clear Log</a>
+    </p>
     <div id="LogContent" runat="server" />
   </body>
 </html>

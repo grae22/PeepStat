@@ -76,6 +76,13 @@ namespace TeamTracker
 
     //---------------------------------------------------------------------------
 
+    public static void ClearLog()
+    {
+      File.WriteAllText( HttpContext.Current.Server.MapPath( FILENAME ), "" );
+    }
+
+    //---------------------------------------------------------------------------
+
     static string GetTimestampPrefix()
     {
       return DateTime.Now.ToString( "yyyy/MM/dd HH:mm:ss" ) + " | ";

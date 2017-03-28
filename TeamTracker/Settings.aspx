@@ -29,7 +29,7 @@
           DataKeyNames="id"
           ShowHeader="true"
           ShowFooter="false">
-          <AlternatingRowStyle BackColor="LightBlue" ForeColor="Black" />
+          <AlternatingRowStyle BackColor="LightBlue" ForeColor="Black"/>
           <Columns>
             <asp:CommandField
               ShowEditButton="true"
