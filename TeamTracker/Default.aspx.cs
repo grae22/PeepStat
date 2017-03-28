@@ -21,7 +21,7 @@ public partial class _Default : System.Web.UI.Page
   const string IMAGE_PATH_PERSON = IMAGE_PATH + "person.png";
   const string IMAGE_PATH_CONTACT = IMAGE_PATH + "contact.png";
 
-  Dictionary<string, string> Settings = new Dictionary<string, string>();
+  SettingsManager Settings = new SettingsManager();
   Dictionary<int, Status> StatusTypes;
   Dictionary<int, Person> People;
   int EditPersonId = -1;
@@ -43,7 +43,7 @@ public partial class _Default : System.Web.UI.Page
       People = Person.Load( connection, StatusTypes );
     }
 
-    PageHeader.Text = Settings[ "PageHeader" ];
+    PageHeader.Text = Settings.Setting[ "PageHeader" ];
 
     BuildUiTable( StatusTable, People, StatusTypes );
   }
@@ -52,34 +52,7 @@ public partial class _Default : System.Web.UI.Page
 
   void GetSettingsFromDb()
   {
-    Settings.Clear();
-
-    using( var connection = new SqlConnection( Database.DB_CONNECTION_STRING ) )
-    {
-      connection.Open();
-
-      SqlDataReader reader =
-        new SqlCommand(
-          "SELECT [Key], Value FROM Setting",
-          connection ).ExecuteReader();
-
-      using( reader )
-      {
-        while( reader.Read() )
-        {
-          Settings.Add(
-            reader.GetString( 0 ),
-            reader.GetString( 1 ) );
-        }
-      }
-    }
-
-    // Apply some default settings if any are missing.
-    if( !Settings.ContainsKey( "PageHeader" ) ) Settings.Add( "PageHeader", "### Missing Setting ###" );
-    if( !Settings.ContainsKey( "DefaultContactType" ) ) Settings.Add( "DefaultContactType", "Phone" );
-    if( !Settings.ContainsKey( "StatusRefreshRate" ) ) Settings.Add( "StatusRefreshRate", "60" );
-
-    StatusRefreshRate = Settings[ "StatusRefreshRate" ];
+    StatusRefreshRate = Settings.Setting[ "StatusRefreshRate" ];
   }
 
   //---------------------------------------------------------------------------
