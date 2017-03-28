@@ -10,8 +10,8 @@ public partial class ViewLog : System.Web.UI.Page
   protected void Page_Load( object sender, EventArgs e )
   {
     // Bounce back to main page if session has expired.
-    if( Session[ SettingsLogin.SES_SETTINGS_LOGGED_IN ] == null ||
-        (bool)Session[ SettingsLogin.SES_SETTINGS_LOGGED_IN ] == false )
+    if( Session[ SessionVars.SES_SETTINGS_LOGGED_IN ] == null ||
+        (bool)Session[ SessionVars.SES_SETTINGS_LOGGED_IN ] == false )
     {
       Server.Transfer( "Default.aspx" );
     }
@@ -38,9 +38,10 @@ public partial class ViewLog : System.Web.UI.Page
 
   //---------------------------------------------------------------------------
 
-  protected void ClearLog()
+  protected void ClearLog( object sender, EventArgs e )
   {
     Log.ClearLog();
+    Server.Transfer( "ViewLog.aspx" );
   }
 
   //---------------------------------------------------------------------------

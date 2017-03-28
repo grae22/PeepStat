@@ -11,10 +11,14 @@
     <link rel="icon" href="resources/team.png" />
   </head>
   <body>
-    <p>
+    <form id="ViewLogForm" runat="server">
       <a href="Settings.aspx">Back</a>
-      <a href="<% ClearLog(); %>">Clear Log</a>
-    </p>
-    <div id="LogContent" runat="server" />
+      <asp:LinkButton
+        ID="ClearLogLink"
+        runat="server"
+        OnClick="ClearLog"
+        Text="Clear Log" />
+    </form>
+    <p><div id="LogContent" runat="server" /></p>
   </body>
 </html>
