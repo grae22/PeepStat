@@ -6,8 +6,6 @@ public partial class SettingsLogin : System.Web.UI.Page
 {
   //---------------------------------------------------------------------------
 
-  public static readonly string SES_SETTINGS_LOGGED_IN = "SesSettingsLoggedIn";
-
   protected string DbConnectionString = Database.DB_CONNECTION_STRING;
 
   //---------------------------------------------------------------------------
@@ -24,7 +22,7 @@ public partial class SettingsLogin : System.Web.UI.Page
 
     if( ValidatePassword( password ) )
     {
-      Session[ SES_SETTINGS_LOGGED_IN ] = true;
+      Session[ SessionVars.SES_SETTINGS_LOGGED_IN ] = true;
       Server.Transfer( "Settings.aspx" );
     }
   }
