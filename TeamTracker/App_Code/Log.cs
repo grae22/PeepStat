@@ -13,6 +13,17 @@ namespace TeamTracker
 
     //---------------------------------------------------------------------------
 
+    public static void LogToFile( string msg )
+    {
+      AppendToLogFile(
+        string.Format(
+          "{0}{1}",
+          GetTimestampPrefix(),
+          msg ) );
+    }
+    
+    //---------------------------------------------------------------------------
+
     public static void LogToFile( Exception ex )
     {
       if( ex == null )
@@ -22,19 +33,19 @@ namespace TeamTracker
 
       StringBuilder builder = new StringBuilder();
 
-      builder.Append( "*********************" + Environment.NewLine );
-      builder.Append( ' ' + DateTime.Now.ToString( "yyyy/MM/dd HH:mm:ss" ) );
-      builder.Append( Environment.NewLine + "*********************" + Environment.NewLine );
-      builder.Append( "Type : " + ex.GetType().Name );
+      string timestampPrefix = GetTimestampPrefix();
+
+      builder.Append( timestampPrefix + "*********************" + Environment.NewLine );
+      builder.Append( timestampPrefix + "Type : " + ex.GetType().Name );
       builder.Append( Environment.NewLine );
-      builder.Append( "Message : " + ex.Message );
+      builder.Append( timestampPrefix + "Message : " + ex.Message );
       builder.Append( Environment.NewLine );
-      builder.Append( "Source : " + ex.Source );
+      builder.Append( timestampPrefix + "Source : " + ex.Source );
       builder.Append( Environment.NewLine );
 
       if( ex.StackTrace != null )
       {
-        builder.Append( "Error Trace : " + ex.StackTrace );
+        builder.Append( timestampPrefix + "Error Trace : " + ex.StackTrace );
         builder.Append( Environment.NewLine );
       }
 
@@ -44,22 +55,36 @@ namespace TeamTracker
       {
         builder.Append( Environment.NewLine );
         builder.Append( Environment.NewLine );
-        builder.Append( "Type : " + innerEx.GetType().Name );
+        builder.Append( timestampPrefix + "Type : " + innerEx.GetType().Name );
         builder.Append( Environment.NewLine );
-        builder.Append( "Message : " + innerEx.Message );
+        builder.Append( timestampPrefix + "Message : " + innerEx.Message );
         builder.Append( Environment.NewLine );
-        builder.Append( "Source : " + innerEx.Source );
+        builder.Append( timestampPrefix + "Source : " + innerEx.Source );
         builder.Append( Environment.NewLine );
 
         if( ex.StackTrace != null )
         {
-          builder.Append( "Error Trace : " + innerEx.StackTrace );
+          builder.Append( timestampPrefix + "Error Trace : " + innerEx.StackTrace );
           builder.Append( Environment.NewLine );
         }
 
         innerEx = innerEx.InnerException;
       }
 
+      AppendToLogFile( builder.ToString() );
+    }
+
+    //---------------------------------------------------------------------------
+
+    static string GetTimestampPrefix()
+    {
+      return DateTime.Now.ToString( "yyyy/MM/dd HH:mm:ss" ) + " | ";
+    }
+
+    //---------------------------------------------------------------------------
+
+    static void AppendToLogFile( string content )
+    {
       string filePath = HttpContext.Current.Server.MapPath( FILENAME );
       string buffer = "";
       bool fileExists = File.Exists( filePath );
@@ -74,7 +99,7 @@ namespace TeamTracker
 
       using( var writer = new StreamWriter( filePath ) )
       {
-        writer.WriteLine( builder.ToString() );
+        writer.WriteLine( content );
         writer.Write( buffer );
         writer.Flush();
       }

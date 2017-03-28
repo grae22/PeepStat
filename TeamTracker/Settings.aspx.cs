@@ -18,6 +18,7 @@ public partial class Settings : System.Web.UI.Page
     dataSource.ConnectionString = Database.DB_CONNECTION_STRING;
 
     settingsView.PreRender += Page_LoadComplete;
+    settingsView.RowUpdated += OnSettingUpdated;
   }
 
   //---------------------------------------------------------------------------
@@ -36,6 +37,14 @@ public partial class Settings : System.Web.UI.Page
         }
       }
     }
+  }
+
+  //---------------------------------------------------------------------------
+
+  protected void OnSettingUpdated( object sender, EventArgs e )
+  {
+    // We call this in case the daily status reset time has changed.
+    TaskScheduler.Start();
   }
 
   //---------------------------------------------------------------------------
