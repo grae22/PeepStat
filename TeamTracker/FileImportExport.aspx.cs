@@ -32,6 +32,9 @@ public partial class FileImportExport : System.Web.UI.Page
         FileUploader.PostedFile.ContentLength );
 
     Result.Text = FileImport.Import( filename );
+
+    // We call this in case the daily status reset time has changed.
+    TaskScheduler.Start();
   }
 
   //---------------------------------------------------------------------------
