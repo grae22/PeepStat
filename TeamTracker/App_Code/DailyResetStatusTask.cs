@@ -12,11 +12,11 @@ namespace TeamTracker
       try
       {
         Database.ExecSql( "TRUNCATE TABLE PeopleStatus" );
-        Log.LogToFile( "Status reset performed." );
+        Log.AddEntry( "Status reset performed." );
       }
       catch( Exception ex )
       {
-        Log.LogToFile( ex );
+        Log.AddEntry( ex );
       }
     }
 

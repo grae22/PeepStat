@@ -46,7 +46,7 @@ namespace TeamTracker
 
       statusResetTrigger = trigger;
 
-      Log.LogToFile( "Daily status reset scheduled for " + resetTime.ToShortTimeString() );
+      Log.AddEntry( "Daily status reset scheduled for " + resetTime.ToShortTimeString() );
     }
 
     //-------------------------------------------------------------------------
