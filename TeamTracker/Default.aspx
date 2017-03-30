@@ -70,7 +70,6 @@
       var link = document.createElement( "a" );
       link.innerHTML = contactTypeName;
       link.href = hyperlinkPrefix + ':' + contactAddress + hyperlinkPostfix;
-      link.className = "contactDropdownLink";
 
       panel.appendChild( subIcon );
       panel.innerHTML += ' ';
@@ -93,6 +92,7 @@
 </script>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
+ <div id="wrapper">
   <head runat="server">
     <asp:PlaceHolder runat="server">
       <meta http-equiv="Refresh" content="<%= StatusRefreshRate %>;url=Default.aspx" />
@@ -104,7 +104,7 @@
   </head>
   <body>
     <div style="display:block;"> 
-      <img src="resources/Logo.png" style="width: 24px; height: 24px;" /> 
+      <img src="resources/Logo.png" style="width: 24px; height: 24px; " /> 
       <asp:Label 
         ID="PageHeader" 
         runat="server" 
@@ -119,7 +119,7 @@
           <tr> 
             <td>TeamTracker v1.0 © GB & JM 2017</td> 
             <td style="text-align:right;"> 
-              <a href="SettingsLogin.aspx">Settings</a> 
+              <a href="SettingsLogin.aspx" style="color:#5caeb4;">Settings</a> 
             </td> 
           </tr> 
         </table> 
@@ -127,7 +127,23 @@
     </div>
     <div
       id="ContactPanel"
-      class="w3-panel contactDropdownPanel">
+      class="w3-panel"
+      style="
+        border:black;
+        border-style:solid;
+        border-width:1px;
+        border-color:#87d7ff;
+        background-color:#ffffff;
+        color:#fe5d00;
+        font-family:Arial;
+        position:absolute;
+        opacity:0.8;
+        visibility:visible;
+        display:none;
+        width:65px;
+        height:38px;
+        padding: 4px;">
     </div>
   </body>
+ </div>
 </html>
