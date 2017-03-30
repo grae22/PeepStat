@@ -93,6 +93,7 @@
 </script>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
+ <div id="wrapper">
   <head runat="server">
     <asp:PlaceHolder runat="server">
       <meta http-equiv="Refresh" content="<%= StatusRefreshRate %>;url=Default.aspx" />
@@ -130,4 +131,5 @@
       class="w3-panel contactDropdownPanel">
     </div>
   </body>
+ </div>
 </html>
