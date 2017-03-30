@@ -118,7 +118,7 @@
           <tr> 
             <td>TeamTracker v1.0 © GB & JM 2017</td> 
             <td style="text-align:right;"> 
-              <a href="SettingsLogin.aspx" style="color:#5caeb4;">Settings</a> 
+              <a href="SettingsLogin.aspx">Settings</a> 
             </td> 
           </tr> 
         </table> 

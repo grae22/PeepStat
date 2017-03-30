@@ -1,23 +1,57 @@
 ﻿body
 {
-  font-family: Arial; 
-  font-size: 10pt;}
+font-family: Arial;
+font-size: 10pt;
+background: #000000;
+color: #E6E6FA;
+}
 
 .pageHeader
 {
-  font-family: Arial; 
-  font-size: 16pt;
-  font-weight: bold;
+font-family: Arial;
+font-size: 16pt;
+font-weight: bold;
 }
 
 .pageFooter
 {
-  font-size: 8pt;
+font-size: 8pt;
 }
 
 .selectAllOrNonePlaceholder
 {
-  display: block;
-  width: 24px;
-  height: 24px;
+display: block;
+width: 24px;
+height: 24px;
+}
+
+img
+{
+vertical-align: text-bottom;
+}
+
+#wrapper
+{
+width:330px;
+margin: 0 auto;
+}
+
+a:link
+{
+  color: #58ccd4;
+}
+
+a:visited
+{
+  color: #58ccd4;
+}
+
+a:hover
+{
+  color: #00e8ff;
+}
+
+a:active
+{
+  color: #00e8ff;
 }

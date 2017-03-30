@@ -11,7 +11,7 @@
     <link rel="icon" href="resources/team.png" />
   </head>
   <body>
-    <p><a href="Settings.aspx">Back to Settings</a></p>
+    <p><a href="Settings.aspx">Back</a></p>
     <form id="ImportExportForm" runat="server">
       <div>
         <p>
