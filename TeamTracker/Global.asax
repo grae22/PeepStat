@@ -15,7 +15,7 @@
   void Application_Error( object sender, EventArgs e )
   {
     Exception ex = Server.GetLastError();
-    Log.LogToFile( ex );
+    Log.AddEntry( ex );
     Server.Transfer( "Error.aspx" );
   }
 

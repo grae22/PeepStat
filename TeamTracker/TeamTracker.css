@@ -35,3 +35,23 @@ vertical-align: text-bottom;
 width:330px;
 margin: 0 auto;
 }
+
+a:link
+{
+  color: #58ccd4;
+}
+
+a:visited
+{
+  color: #58ccd4;
+}
+
+a:hover
+{
+  color: #00e8ff;
+}
+
+a:active
+{
+  color: #00e8ff;
+}

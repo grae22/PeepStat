@@ -13,7 +13,7 @@ namespace TeamTracker
 
     //---------------------------------------------------------------------------
 
-    public static void LogToFile( string msg )
+    public static void AddEntry( string msg )
     {
       AppendToLogFile(
         string.Format(
@@ -24,7 +24,7 @@ namespace TeamTracker
     
     //---------------------------------------------------------------------------
 
-    public static void LogToFile( Exception ex )
+    public static void AddEntry( Exception ex )
     {
       if( ex == null )
       {
