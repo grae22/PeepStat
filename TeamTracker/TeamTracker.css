@@ -55,3 +55,35 @@ a:active
 {
   color: #00e8ff;
 }
+
+.contactDropdownPanel
+{
+  border: black;
+  border-style: solid;
+  border-width: 1px;
+  border-color: cyan;
+  background-color: black;
+  position: absolute;
+  opacity: 0.7;
+  visibility: visible;
+  display: none;
+  width: 65px;
+  height: 38px;
+  padding: 4px;
+}
+
+.contactDropdownLink:link
+{
+  color: #adfaff;
+}
+
+.contactDropdownLink:visited
+{
+  color: #adfaff;
+}
+
+.contactDropdownLink:hover
+{
+  color: yellow;
+  font-weight: bold;
+}
