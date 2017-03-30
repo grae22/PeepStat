@@ -49,6 +49,7 @@ a:visited
 a:hover
 {
   color: #00e8ff;
+  font-weight: bold;
 }
 
 a:active
@@ -61,10 +62,10 @@ a:active
   border: black;
   border-style: solid;
   border-width: 1px;
-  border-color: cyan;
+  border-color: #E6E6FA;
   background-color: black;
   position: absolute;
-  opacity: 0.7;
+  opacity: 0.8;
   visibility: visible;
   display: none;
   width: 65px;
@@ -84,6 +85,6 @@ a:active
 
 .contactDropdownLink:hover
 {
-  color: yellow;
+  color: #00e8ff;;
   font-weight: bold;
 }
