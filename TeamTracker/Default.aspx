@@ -70,6 +70,7 @@
       var link = document.createElement( "a" );
       link.innerHTML = contactTypeName;
       link.href = hyperlinkPrefix + ':' + contactAddress + hyperlinkPostfix;
+      link.className = "contactDropdownLink";
 
       panel.appendChild( subIcon );
       panel.innerHTML += ' ';
@@ -126,22 +127,7 @@
     </div>
     <div
       id="ContactPanel"
-      class="w3-panel"
-      style="
-        border:black;
-        border-style:solid;
-        border-width:1px;
-        border-color:#87d7ff;
-        background-color:#ffffff;
-        color:#fe5d00;
-        font-family:Arial;
-        position:absolute;
-        opacity:0.8;
-        visibility:visible;
-        display:none;
-        width:65px;
-        height:38px;
-        padding: 4px;">
+      class="w3-panel contactDropdownPanel">
     </div>
   </body>
 </html>
